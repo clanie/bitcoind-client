@@ -15,20 +15,20 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package dk.clanie.bitcoin.client;
+package dk.clanie.bitcoin.exception.client;
 
 import dk.clanie.bitcoin.client.response.BitcoinJsonRpcErrorResponse;
 
 /**
- * Thrown when trying to use an unknown bitcoin address.
+ * Thrown when calling a non-existing json-rpc method.
  * 
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
-public class UnknownAddressException extends BitcoinJsonRpcException {
+public class MethodNotFoundException extends BitcoinClientException {
 
 
-	public UnknownAddressException(BitcoinJsonRpcErrorResponse errorResponse) {
+	public MethodNotFoundException(BitcoinJsonRpcErrorResponse errorResponse) {
 		super(errorResponse);
 	}
 

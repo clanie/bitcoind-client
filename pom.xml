@@ -13,7 +13,7 @@
 	<packaging>jar</packaging>
 
 	<name>Bitcoind (bitcoind) Client</name>
-	<description>A client library for communicationg with bitcoind.</description>
+	<description>A client library for communicating with bitcoind.</description>
 	<inceptionYear>2013</inceptionYear>
 
 	<url>https://bitbucket.org/clanie/bitcoind-client</url>

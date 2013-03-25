@@ -15,22 +15,21 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package dk.clanie.bitcoin.client;
+package dk.clanie.bitcoin.exception.client;
 
 import dk.clanie.bitcoin.client.response.BitcoinJsonRpcErrorResponse;
+import dk.clanie.bitcoin.exception.BitcoinException;
 
 /**
- * Indicates that an operation could not be performed on the wallet because it wasn't encrypted.
- * 
+ * Indicates that an HTTP 400-series (client error) status was received from the server.
+ *  
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
-public class WalletNotEncryptedException extends BitcoinJsonRpcException {
+public class BitcoinClientException extends BitcoinException {
 
-
-	public WalletNotEncryptedException(BitcoinJsonRpcErrorResponse errorResponse) {
+	public BitcoinClientException(BitcoinJsonRpcErrorResponse errorResponse) {
 		super(errorResponse);
 	}
 
-	
 }

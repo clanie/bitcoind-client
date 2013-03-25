@@ -15,22 +15,13 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package dk.clanie.bitcoin.client;
-
-import dk.clanie.bitcoin.client.response.BitcoinJsonRpcErrorResponse;
+package dk.clanie.bitcoin.client.response;
 
 /**
- * Thrown when trying to use an invalid bitcoin address.
+ * Response returned from addmultisigaddress.
  * 
  * @author Claus Nielsen
  */
-@SuppressWarnings("serial")
-public class InvalidAddressException extends BitcoinJsonRpcException {
+public class AddMultiSigAddressResponse extends BitcoinJsonRpcResponse<String> {
 
-
-	public InvalidAddressException(BitcoinJsonRpcErrorResponse errorResponse) {
-		super(errorResponse);
-	}
-
-	
 }

@@ -15,36 +15,22 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package dk.clanie.bitcoin.client;
+package dk.clanie.bitcoin.exception.server;
 
 import dk.clanie.bitcoin.client.response.BitcoinJsonRpcErrorResponse;
 
+/**
+ * Thrown when trying to use an unknown bitcoin address.
+ * 
+ * @author Claus Nielsen
+ */
 @SuppressWarnings("serial")
-public class BitcoinJsonRpcException extends RuntimeException {
+public class UnknownAddressException extends BitcoinServerException {
 
-	private BitcoinJsonRpcErrorResponse errorResponse;
 
-	public BitcoinJsonRpcException(BitcoinJsonRpcErrorResponse errorResponse) {
-		super(errorResponse.getError().getMessage());
-		this.errorResponse = errorResponse;
+	public UnknownAddressException(BitcoinJsonRpcErrorResponse errorResponse) {
+		super(errorResponse);
 	}
 
-	/**
-	 * Gets the whole response received from bitcoind.
-	 * 
-	 * @return {@link BitcoinJsonRpcErrorResponse}
-	 */
-	public BitcoinJsonRpcErrorResponse getErrorResponse() {
-		return errorResponse;
-	}
-
-	/**
-	 * Gets the error code received from bitcoind.
-	 * 
-	 * @return errorcode.
-	 */
-	public Integer getErrorCode() {
-		return errorResponse.getError().getCode();
-	}
-
+	
 }
