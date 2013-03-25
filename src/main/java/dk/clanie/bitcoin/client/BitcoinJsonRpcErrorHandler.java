@@ -37,7 +37,6 @@ import dk.clanie.bitcoin.exception.client.BitcoinClientException;
 import dk.clanie.bitcoin.exception.client.MethodNotFoundException;
 import dk.clanie.bitcoin.exception.server.BitcoinServerException;
 import dk.clanie.bitcoin.exception.server.InvalidAddressException;
-import dk.clanie.bitcoin.exception.server.UnknownAddressException;
 import dk.clanie.bitcoin.exception.server.WalletNotEncryptedException;
 
 /**
@@ -75,7 +74,8 @@ public class BitcoinJsonRpcErrorHandler extends DefaultResponseErrorHandler {
 				throw new BitcoinServerException(errorResponse);
 			case -4:
 				// Private key for address <bitcoinaddress> is not known
-				throw new UnknownAddressException(errorResponse);
+				// Wallet backup failed!
+				throw new BitcoinServerException(errorResponse);
 			case -5:
 				// Invalid Bitcoin address
 				throw new InvalidAddressException(errorResponse);

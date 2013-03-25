@@ -28,7 +28,6 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -40,7 +39,7 @@ import dk.clanie.bitcoin.client.response.DumpPrivateKeyResponse;
 import dk.clanie.bitcoin.client.response.GetAccountResponse;
 import dk.clanie.bitcoin.client.response.GetInfoResponse;
 import dk.clanie.bitcoin.client.response.VoidResponse;
-import dk.clanie.bitcoin.exception.server.BitcoinServerException;
+import dk.clanie.bitcoin.exception.BitcoinException;
 
 /**
  * 
@@ -75,7 +74,6 @@ public class BitcoinClient {
 	}
 
 
-	// TODO addmultisigaddress <nrequired> <'["key","key"]'> [account] 
 	/**
 	 * Add a nrequired-to-sign multisignature address to the wallet.
 	 * <p>
@@ -89,6 +87,7 @@ public class BitcoinClient {
 	 */
 	public AddMultiSigAddressResponse addMultiSigAddress(int nrequired, List<String> keys, String account) {
 		// TODO test/fix - so far always fails with "no full public key for address mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq"
+		// addmultisigaddress <nrequired> <'["key","key"]'> [account] 
 		List<Object> params = newArrayList();
 		params.add(nrequired);
 		params.add(keys);
@@ -98,9 +97,27 @@ public class BitcoinClient {
 
 
 	// TODO addnode remove|onetry> version 0.8 Attempts add or remove <node> from the addnode list or try a connection to <node> once. N
-	// TODO backupwallet <destination> Safely copies wallet.dat to destination, which can be a directory or a path with filename. N
+
+
+	/**
+	 * Safely copies wallet.dat to destination.
+	 * <p>
+	 * Destination can be a directory or a path with filename.
+	 * 
+	 * @param destination - directory or filename.
+	 * @return {@link VoidResponse}
+	 */
+	public VoidResponse backupWallet(String destination) {
+		List<Object> params = newArrayList();
+		params.add(destination);
+		return jsonRpc("backupwallet", params, VoidResponse.class);
+
+	}
+
+
 	// TODO createrawtransaction [{"txid":txid,"vout":n},...] {address:amount,...} version 0.7 Creates a raw transaction spending given inputs. N
 	// TODO decoderawtransaction <hex string> version 0.7 Produces a human-readable JSON object for a raw transaction. N
+
 
 	/**
 	 * Reveals the private key corresponding to the given bitcoin address.
@@ -149,10 +166,6 @@ public class BitcoinClient {
 	/**
 	 * Gets various state info.
 	 * 
-	 * @param id
-	 *            an optional id which will be repeated in the response. It is
-	 *            used to match the response with the request that it is
-	 *            replying to.
 	 * @return {@link GetInfoResponse}
 	 */
 	public GetInfoResponse getInfo() {
@@ -269,7 +282,7 @@ public class BitcoinClient {
 	 * 
 	 * @param oldPassPhrase
 	 * @param newPassPhrase
-	 * @return
+	 * @return {@link VoidResponse}
 	 */
 	public VoidResponse walletPassPhraseChange(String oldPassPhrase, String newPassPhrase) {
 		List<String> params = newArrayList();
@@ -307,14 +320,7 @@ public class BitcoinClient {
 		// throw new RuntimeException(e);
 		// }
 
-		T response = null;
-		try {
-			response = rest.postForObject(BITCOIND_URL, request, responseType);
-		} catch (HttpStatusCodeException e) {
-			System.out.println(e.getResponseBodyAsString());
-			e.printStackTrace();
-		}
-		return response;
+		return rest.postForObject(BITCOIND_URL, request, responseType);
 	}
 
 	public static void main(String[] args) {
@@ -324,30 +330,34 @@ public class BitcoinClient {
 	private void run() {
 		try {
 
-			List<String> keys = newArrayList();
-			keys.add("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq");
-			addMultiSigAddress(1, keys, "ACCOUNT1");
-			
-			// DumpPrivateKeyResponse dumpPrivateKeyResponse =
-			// dumpPrivateKey("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq");
-			// print(dumpPrivateKeyResponse);
+			//			VoidResponse backupWallet = backupWallet("C:\\wallet.backup");
+			//			print(backupWallet);
 
-			// GetAccountResponse getAccountResponse =
-			// getAccount("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq");
-			// print(getAccountResponse);
+			//			List<String> keys = newArrayList();
+			//			keys.add("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq");
+			//			AddMultiSigAddressResponse addMultiSigAddress = addMultiSigAddress(1, keys, "ACCOUNT1");
+			//			print(addMultiSigAddress);
 
-			// GetInfoResponse info = getInfo();
-			// print(info);
+			//			DumpPrivateKeyResponse dumpPrivateKeyResponse = dumpPrivateKey("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq");
+			//			print(dumpPrivateKeyResponse);
 
-//			VoidResponse walletPassPhraseResponse = walletPassPhrase("", 5);
-//			print(walletPassPhraseResponse);
+			//			GetAccountResponse getAccountResponse = getAccount("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq");
+			//			print(getAccountResponse);
 
-			// VoidResponse walletPassPhraseChangeResponse =
-			// walletPassPhraseChange("", "boo");
-			// print(walletPassPhraseChangeResponse);
+			//			GetInfoResponse info = getInfo();
+			//			print(info);
 
-		} catch (BitcoinServerException e) {
+			//			VoidResponse walletPassPhraseResponse = walletPassPhrase("", 5);
+			//			print(walletPassPhraseResponse);
+
+			//			VoidResponse walletPassPhraseChangeResponse = walletPassPhraseChange("", "boo");
+			//			print(walletPassPhraseChangeResponse);
+
+		} catch (BitcoinException e) {
+			System.out.println("Error response:");
 			print(e.getErrorResponse());
+			e.printStackTrace();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
