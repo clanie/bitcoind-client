@@ -16,4 +16,8 @@ privileged aspect BitcoinJsonRpcErrorResponse_Roo_JavaBean {
         return this.error;
     }
     
+    public String BitcoinJsonRpcErrorResponse.getXxx() {
+        return this.xxx;
+    }
+    
 }

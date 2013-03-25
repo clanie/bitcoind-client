@@ -344,8 +344,8 @@ public class BitcoinClient {
 			//			GetAccountResponse getAccountResponse = getAccount("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq");
 			//			print(getAccountResponse);
 
-			//			GetInfoResponse info = getInfo();
-			//			print(info);
+						GetInfoResponse info = getInfo();
+						print(info);
 
 			//			VoidResponse walletPassPhraseResponse = walletPassPhrase("", 5);
 			//			print(walletPassPhraseResponse);

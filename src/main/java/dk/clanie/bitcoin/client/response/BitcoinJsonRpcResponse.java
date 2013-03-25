@@ -19,11 +19,12 @@ package dk.clanie.bitcoin.client.response;
 
 import static dk.clanie.collections.CollectionFactory.newHashMap;
 
+import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 
 /**
@@ -49,6 +50,12 @@ public abstract class BitcoinJsonRpcResponse<T> {
 	}
 
 
+	/**
+	 * Sets name and value of other (unknown) JSON fields.
+	 * 
+	 * @param field
+	 * @param value
+	 */
 	@JsonAnySetter
 	public void set(String field, Object value)  {
 		otherFields.put(field, value);
@@ -56,22 +63,13 @@ public abstract class BitcoinJsonRpcResponse<T> {
 
 
 	/**
-	 * Gets the value of other fields available in the JSON response.
-	 *  
-	 * @param field
-	 */
-	public Object get(String field) {
-		return otherFields.get(field);
-	}
-
-
-	/**
-	 * Gets names of all other (unknown) JSON fields.
+	 * Gets all other (unknown) JSON fields.
 	 * 
-	 * @return Names of other fields available. 
+	 * @return Map with names and values of all other fields available. 
 	 */
-	public Set<String> getOtherFields() {
-		return otherFields.keySet();
+	@JsonAnyGetter
+	public Map<String, Object> getOtherFields() {
+		return Collections.unmodifiableMap(otherFields);
 	}
 
 
