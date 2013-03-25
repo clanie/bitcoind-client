@@ -16,11 +16,11 @@
 	<description>A client library for communicating with bitcoind.</description>
 	<inceptionYear>2013</inceptionYear>
 
-	<url>https://bitbucket.org/clanie/bitcoind-client</url>
+	<url>https://github.com/clanie/bitcoind-client</url>
 
 	<scm>
-		<connection>scm:git:ssh://git@bitbucket.org/clanie/bitcoind-client.git</connection>
-		<url>https://bitbucket.org/clanie/bitcoind-client</url>
+		<connection>scm:git:ssh://git@github.com/clanie/bitcoind-client.git</connection>
+		<url>https://github.com/clanie/bitcoind-client</url>
 	</scm>
 
 	<properties>
