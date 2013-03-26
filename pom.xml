@@ -36,20 +36,51 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.0</version>
 				<configuration>
-					<compilerId>aspectj</compilerId>
+					<failOnError>false</failOnError>
+					<!-- Following exclusions make it possible to build with Maven BUT it 
+						breakes the project in Eclipse/STS... -->
+					<!-- <excludes> <exclude>**/*.java</exclude> </excludes> <testExcludes> 
+						<exclude>**/*.java</exclude> </testExcludes> -->
+					<compilerVersion>${version.java}</compilerVersion>
+					<source>${version.java}</source>
+					<target>${version.java}</target>
 				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.codehaus.plexus</groupId>
-						<artifactId>plexus-compiler-aspectj</artifactId>
-						<version>2.2</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>aspectj-maven-plugin</artifactId>
 				<version>1.4</version>
+				<configuration>
+					<showWeaveInfo>true</showWeaveInfo>
+					<source>${version.java}</source>
+					<target>${version.java}</target>
+					<Xlint>ignore</Xlint>
+					<complianceLevel>${version.java}</complianceLevel>
+					<encoding>UTF-8</encoding>
+					<verbose>true</verbose>
+					<aspectLibraries>
+						<aspectLibrary>
+							<groupId>org.springframework</groupId>
+							<artifactId>spring-aspects</artifactId>
+						</aspectLibrary>
+					</aspectLibraries>
+				</configuration>
+				<executions>
+					<execution>
+						<!-- Executing in the process-sources phase to force aj compiler to 
+							run before Java compiler, which otherwise fails. -->
+						<!-- As stated in https://jira.codehaus.org/browse/MASPECTJ-92 this 
+							may have undesired consequences as -->
+						<!-- aj compiler now runs before eg. maven-resources-plugin:testResources 
+							and that's not the expected order -->
+						<!--  phase>process-sources</phase -->
+						<phase>compile</phase>
+						<goals>
+							<goal>compile</goal>
+							<goal>test-compile</goal>
+						</goals>
+					</execution>
+				</executions>
 				<dependencies>
 					<dependency>
 						<groupId>org.aspectj</groupId>
