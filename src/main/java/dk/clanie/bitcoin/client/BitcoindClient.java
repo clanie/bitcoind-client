@@ -20,7 +20,6 @@ package dk.clanie.bitcoin.client;
 import static dk.clanie.collections.CollectionFactory.newArrayList;
 import static dk.clanie.collections.CollectionFactory.newHashMap;
 import static dk.clanie.util.Util.firstNotNull;
-import static java.util.Arrays.asList;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -347,7 +346,8 @@ public class BitcoindClient {
 		List<Object> params = newArrayList();
 		params.add(firstNotNull(minConf, Integer.valueOf(1)));
 		params.add(firstNotNull(maxConf, Integer.valueOf(999999)));
-		params.addAll(asList(address));
+		params.add(address);
+		// TODO Implement more specific returntype
 		return jsonRpc("listunspent", params, VoidResponse.class);
 	}
 
@@ -437,8 +437,6 @@ public class BitcoindClient {
 		} catch (JsonProcessingException e) {
 			throw new BitcoinException("JSON serialization failed.", e);
 		}
-//		"params":[0,999999,
-		request = request.replaceFirst("\"params\":\\[0,999999,", "minconf=1,maxconf=9999,\"params\":\\[");
 		return rest.postForObject(BITCOIND_URL, request, responseType);
 	}
 
