@@ -22,6 +22,7 @@ package dk.clanie.bitcoin.client.response;
  * 
  * @author Claus Nielsen
  */
-public class AddMultiSigAddressResponse extends BitcoinJsonRpcResponse<String> {
+@SuppressWarnings("serial")
+public class AddMultiSigAddressResponse extends BitcoindJsonRpcResponse<String> {
 
 }

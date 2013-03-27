@@ -15,35 +15,22 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package dk.clanie.bitcoin.client.response;
+package dk.clanie.bitcoin.exception.server;
 
-import java.math.BigDecimal;
-
-import org.springframework.roo.addon.javabean.RooJavaBean;
-
-import dk.clanie.bitcoin.json.JsonExtra;
+import dk.clanie.bitcoin.client.response.BitcoindJsonRpcErrorResponse;
 
 /**
- * Data returned by getInfo.
+ * Indicates that an operation could not be performed on the wallet because it wasn't encrypted.
  * 
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
-@RooJavaBean(settersByDefault = false)
-public class GetInfoResult extends JsonExtra {
+public class WalletEncryptionException extends BitcoinServerException {
 
-	private Integer version;
-	private Integer protocolversion;
-	private Integer walletversion;
-	private BigDecimal balance;
-	private Integer blocks;
-	private Integer connections;
-	private String proxy;
-	private Double difficulty;
-	private Boolean testnet;
-	private Long keypoololdest;
-	private Integer keypoolsize;
-	private Double paytxfee;
-	private String errors;
 
+	public WalletEncryptionException(BitcoindJsonRpcErrorResponse errorResponse) {
+		super(errorResponse);
+	}
+
+	
 }

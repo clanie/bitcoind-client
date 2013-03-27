@@ -17,6 +17,12 @@
  */
 package dk.clanie.bitcoin.client.response;
 
-public class DumpPrivateKeyResponse extends BitcoinJsonRpcResponse<DumpPrivateKeyResult> {
+/**
+ * Response object returned by dumpPrivateKey.
+ *
+ * @author Claus Nielsen
+ */
+@SuppressWarnings("serial")
+public class DumpPrivateKeyResponse extends BitcoindJsonRpcResponse<DumpPrivateKeyResult> {
 
 }

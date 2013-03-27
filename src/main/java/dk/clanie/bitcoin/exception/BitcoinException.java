@@ -17,7 +17,7 @@
  */
 package dk.clanie.bitcoin.exception;
 
-import dk.clanie.bitcoin.client.response.BitcoinJsonRpcErrorResponse;
+import dk.clanie.bitcoin.client.response.BitcoindJsonRpcErrorResponse;
 
 /**
  * Superclass for all exceptions thrown when a call to bitcoind fails.
@@ -27,10 +27,10 @@ import dk.clanie.bitcoin.client.response.BitcoinJsonRpcErrorResponse;
 @SuppressWarnings("serial")
 public class BitcoinException extends RuntimeException {
 
-	private BitcoinJsonRpcErrorResponse errorResponse = null;
+	private BitcoindJsonRpcErrorResponse errorResponse = null;
 
 
-	protected BitcoinException(BitcoinJsonRpcErrorResponse errorResponse) {
+	protected BitcoinException(BitcoindJsonRpcErrorResponse errorResponse) {
 		super(errorResponse.getError().getMessage());
 		this.errorResponse = errorResponse;
 	}
@@ -49,9 +49,9 @@ public class BitcoinException extends RuntimeException {
 	/**
 	 * Gets the whole response received from bitcoind.
 	 * 
-	 * @return {@link BitcoinJsonRpcErrorResponse} - may be null.
+	 * @return {@link BitcoindJsonRpcErrorResponse} - may be null.
 	 */
-	public BitcoinJsonRpcErrorResponse getErrorResponse() {
+	public BitcoindJsonRpcErrorResponse getErrorResponse() {
 		return errorResponse;
 	}
 

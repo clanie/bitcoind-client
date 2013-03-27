@@ -17,33 +17,20 @@
  */
 package dk.clanie.bitcoin.client.response;
 
-import java.math.BigDecimal;
-
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
 import dk.clanie.bitcoin.json.JsonExtra;
 
 /**
- * Data returned by getInfo.
+ * A bitcoind JSON RPC error response.
  * 
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public class GetInfoResult extends JsonExtra {
+public class BitcoindJsonRpcErrorResponse extends JsonExtra {
 
-	private Integer version;
-	private Integer protocolversion;
-	private Integer walletversion;
-	private BigDecimal balance;
-	private Integer blocks;
-	private Integer connections;
-	private String proxy;
-	private Double difficulty;
-	private Boolean testnet;
-	private Long keypoololdest;
-	private Integer keypoolsize;
-	private Double paytxfee;
-	private String errors;
+	private String id;
+	private BitcoindJsonRpcError error;
 
 }

@@ -18,10 +18,11 @@
 package dk.clanie.bitcoin.client.response;
 
 /**
- * Response returned from getaccount.
+ * Response returned from getAccount.
  * 
  * @author Claus Nielsen
  */
-public class GetAccountResponse extends BitcoinJsonRpcResponse<String> {
+@SuppressWarnings("serial")
+public class GetAccountResponse extends BitcoindJsonRpcResponse<String> {
 
 }

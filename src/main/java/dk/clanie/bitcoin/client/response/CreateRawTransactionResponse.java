@@ -15,22 +15,12 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package dk.clanie.bitcoin.exception.server;
+package dk.clanie.bitcoin.client.response;
 
-import dk.clanie.bitcoin.client.response.BitcoinJsonRpcErrorResponse;
+import org.springframework.roo.addon.javabean.RooJavaBean;
 
-/**
- * Indicates that an operation could not be performed on the wallet because it wasn't encrypted.
- * 
- * @author Claus Nielsen
- */
 @SuppressWarnings("serial")
-public class WalletNotEncryptedException extends BitcoinServerException {
+@RooJavaBean(settersByDefault = false)
+public class CreateRawTransactionResponse extends BitcoindJsonRpcResponse<String> {
 
-
-	public WalletNotEncryptedException(BitcoinJsonRpcErrorResponse errorResponse) {
-		super(errorResponse);
-	}
-
-	
 }

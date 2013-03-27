@@ -3,15 +3,15 @@
 
 package dk.clanie.bitcoin.client.response;
 
-import dk.clanie.bitcoin.client.response.BitcoinJsonRpcResponse;
+import dk.clanie.bitcoin.client.response.BitcoindJsonRpcResponse;
 
-privileged aspect BitcoinJsonRpcResponse_Roo_JavaBean {
+privileged aspect BitcoindJsonRpcResponse_Roo_JavaBean {
     
-    public String BitcoinJsonRpcResponse.getId() {
+    public String BitcoindJsonRpcResponse.getId() {
         return this.id;
     }
     
-    public T BitcoinJsonRpcResponse.getResult() {
+    public T BitcoindJsonRpcResponse.getResult() {
         return this.result;
     }
     

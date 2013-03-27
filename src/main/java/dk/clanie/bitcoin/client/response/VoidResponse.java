@@ -17,6 +17,9 @@
  */
 package dk.clanie.bitcoin.client.response;
 
-public class VoidResponse extends BitcoinJsonRpcResponse<Object> {
+import dk.clanie.bitcoin.json.JsonExtra;
+
+@SuppressWarnings("serial")
+public class VoidResponse extends JsonExtra {
 
 }

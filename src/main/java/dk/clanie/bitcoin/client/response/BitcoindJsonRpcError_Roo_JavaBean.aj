@@ -3,15 +3,15 @@
 
 package dk.clanie.bitcoin.client.response;
 
-import dk.clanie.bitcoin.client.response.BitcoinJsonRpcError;
+import dk.clanie.bitcoin.client.response.BitcoindJsonRpcError;
 
-privileged aspect BitcoinJsonRpcError_Roo_JavaBean {
+privileged aspect BitcoindJsonRpcError_Roo_JavaBean {
     
-    public Integer BitcoinJsonRpcError.getCode() {
+    public Integer BitcoindJsonRpcError.getCode() {
         return this.code;
     }
     
-    public String BitcoinJsonRpcError.getMessage() {
+    public String BitcoindJsonRpcError.getMessage() {
         return this.message;
     }
     

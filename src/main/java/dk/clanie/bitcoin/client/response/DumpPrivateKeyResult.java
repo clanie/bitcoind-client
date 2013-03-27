@@ -17,6 +17,9 @@
  */
 package dk.clanie.bitcoin.client.response;
 
-public class DumpPrivateKeyResult {
+import dk.clanie.bitcoin.json.JsonExtra;
+
+@SuppressWarnings("serial")
+public class DumpPrivateKeyResult extends JsonExtra {
 
 }

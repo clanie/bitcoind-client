@@ -19,8 +19,13 @@ package dk.clanie.bitcoin.client.response;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
+/**
+ * Response object returned by getInfo.
+ *
+ * @author Claus Nielsen
+ */
+@SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public class GetInfoResponse extends BitcoinJsonRpcResponse<GetInfoResult> {
-
+public class GetInfoResponse extends BitcoindJsonRpcResponse<GetInfoResult> {
 
 }

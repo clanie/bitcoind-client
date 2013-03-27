@@ -18,9 +18,14 @@
 package dk.clanie.bitcoin.client;
 
 import static dk.clanie.collections.CollectionFactory.newArrayList;
+import static dk.clanie.collections.CollectionFactory.newHashMap;
+import static dk.clanie.util.Util.firstNotNull;
+import static java.util.Arrays.asList;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -32,9 +37,13 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.BasicDBObject;
 
+import dk.clanie.bitcoin.AddressAndAmount;
+import dk.clanie.bitcoin.TransactionOutputRef;
+import dk.clanie.bitcoin.client.request.BitcoindJsonRpcRequest;
 import dk.clanie.bitcoin.client.response.AddMultiSigAddressResponse;
+import dk.clanie.bitcoin.client.response.CreateRawTransactionResponse;
+import dk.clanie.bitcoin.client.response.DecodeRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.DumpPrivateKeyResponse;
 import dk.clanie.bitcoin.client.response.GetAccountResponse;
 import dk.clanie.bitcoin.client.response.GetInfoResponse;
@@ -45,21 +54,27 @@ import dk.clanie.bitcoin.exception.BitcoinException;
  * 
  * @author Claus Nielsen
  */
-public class BitcoinClient {
+public class BitcoindClient {
 
+	// [Configuration]
 	private static final String BITCOIND_HOST = "localhost";
-	private static final int BITCOIND_PORT = 18332;
+	//	private static final int BITCOIND_PORT = 18332;
+	private static final int BITCOIND_PORT = 9999;
 	private static final String BITCOIND_URL = "http://" + BITCOIND_HOST + ":"
 			+ BITCOIND_PORT;
 	private static final String BITCOIND_USER_NAME = "bitcoinrpc";
 	private static final String BITCOIND_PASSWORD = "3LUTo7SCiYmcYZuZyfkgFdLU4hSt9TDAdPQnJuvaGHoJ";
-
+	
+	// [Collaborators]
+	// TODO Make Collaborators @Autowired (configurable with defaults)	
 	private RestTemplate rest;
+	private ObjectMapper objectMapper = new ObjectMapper();
+
 
 	/**
 	 * Default constructor.
 	 */
-	public BitcoinClient() {
+	public BitcoindClient() {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		// Set credentials
 		CredentialsProvider credsProvider = new BasicCredentialsProvider();
@@ -70,7 +85,7 @@ public class BitcoinClient {
 		httpClient.setCredentialsProvider(credsProvider);
 		rest = new RestTemplate(new HttpComponentsClientHttpRequestFactory(
 				httpClient));
-		rest.setErrorHandler(new BitcoinJsonRpcErrorHandler());
+		rest.setErrorHandler(new BitcoindJsonRpcErrorHandler());
 	}
 
 
@@ -115,8 +130,50 @@ public class BitcoinClient {
 	}
 
 
-	// TODO createrawtransaction [{"txid":txid,"vout":n},...] {address:amount,...} version 0.7 Creates a raw transaction spending given inputs. N
-	// TODO decoderawtransaction <hex string> version 0.7 Produces a human-readable JSON object for a raw transaction. N
+	/**
+	 * Creates a raw transaction for spending given inputs.
+	 * 
+	 * Create a transaction spending given outputs (array of objects containing
+	 * transaction id and output number), for sending to given address(es).<br>
+	 * Note that the transaction's inputs are not signed, and it is not stored
+	 * in the wallet or transmitted to the network.<br>
+	 * 
+	 * @param addressAndAmount
+	 * @return {@link CreateRawTransactionResponse} containing hex-encoded raw transaction.
+	 */
+	// TODO Finish createrawtransaction [{"txid":txid,"vout":n},...] {address:amount,...} version 0.7 Creates a raw transaction spending given inputs. N
+	public CreateRawTransactionResponse createRawTransaction(List<TransactionOutputRef> txOutputs, AddressAndAmount ... addressAndAmount) {
+		// TODO Define TransactionOutput ([{"txid":txid,"vout":n},...])
+		// TODO Refine CreateRawTransactionResponse
+		Map<String, BigDecimal> recipients = newHashMap();
+		for (AddressAndAmount aaa : addressAndAmount) {
+			String address = aaa.getAddress();
+			BigDecimal amount = aaa.getAmount();
+			if (recipients.containsKey(address)) {
+				amount = recipients.get(address).add(amount);
+			}
+			recipients.put(address, amount);
+		}
+		List<Object> params = newArrayList();
+		params.add(txOutputs);
+		params.add(recipients);
+		return jsonRpc("createrawtransaction", params, CreateRawTransactionResponse.class);
+
+	}
+
+
+	/**
+	 * Produces a human-readable JSON object for a raw transaction
+	 * 
+	 * @param rawTransaction
+	 * @return {@link DecodeRawTransactionResponse}
+	 */
+	public DecodeRawTransactionResponse decodeRawTransaction(String rawTransaction) {
+		// TODO Define transactionInputs in the response
+		List<Object> params = newArrayList();
+		params.add(rawTransaction);
+		return jsonRpc("decoderawtransaction", params, DecodeRawTransactionResponse.class);
+	}
 
 
 	/**
@@ -134,7 +191,19 @@ public class BitcoinClient {
 		return jsonRpc("dumpprivkey", params, DumpPrivateKeyResponse.class);
 	}
 
-	// TODO encryptwallet <passphrase> Encrypts the wallet with <passphrase>. N
+
+	/**
+	 * Encrypts the wallet with the given pass phrase.
+	 * 
+	 * @param passPhrase
+	 * @return {@link VoidResponse}
+	 */
+	public VoidResponse encryptWallet(String passPhrase) {
+		List<String> params = newArrayList();
+		params.add(passPhrase);
+		return jsonRpc("encryptwallet", params, VoidResponse.class);
+	}
+
 
 	/**
 	 * Returns the account associated with the given address.
@@ -218,7 +287,22 @@ public class BitcoinClient {
 	// TODO "target" : little endian hash target
 	// TODO If [data] is specified, tries to solve the block and returns true if it was successful.
 	// TODO N
+
+
 	// TODO help [command] List commands, or get help for a command. N
+	/**
+	 * @param command - optional. If null a list of available commands is returned.
+	 * @return
+	 */
+	public VoidResponse help(String command) {
+		List<Object> params = newArrayList();
+		if (command != null) {
+			params.add(command);
+		}
+		return jsonRpc("help", params, VoidResponse.class);
+	}
+
+
 	// TODO importprivkey <bitcoinprivkey> [label] [rescan=true] Adds a private key (as returned by dumpprivkey) to your wallet. This may take a while, as a rescan is done, looking for existing transactions. Optional [rescan] parameter added in 0.8.0. Y
 	// TODO keypoolrefill Fills the keypool, requires wallet passphrase to be set. Y
 	// TODO listaccounts [minconf=1] Returns Object that has account names as keys, account balances as values. N
@@ -237,7 +321,37 @@ public class BitcoinClient {
 	// TODO N
 	// TODO listsinceblock [blockhash] [target-confirmations] Get all transactions in blocks since block [blockhash], or all transactions if omitted. N
 	// TODO listtransactions [account] [count=10] [from=0] Returns up to [count] most recent transactions skipping the first [from] transactions for account [account]. If [account] not provided will return recent transaction from all accounts. N
-	// TODO listunspent [minconf=1] [maxconf=999999] version 0.7 Returns array of unspent transaction inputs in the wallet. N
+
+
+	/**
+	 * Lists unspent transaction outputs with between minconf and maxconf
+	 * (inclusive) confirmations. Optionally filtered to only include txouts
+	 * paid to specified addresses.<br>
+	 * 
+	 * // Results are an array of Objects, each of which has:\n{txid, vout,
+	 * scriptPubKey, amount, confirmations
+	 * 
+	 * 
+	 * @param minConf
+	 *            - optional minimum number of confirmations. Default 1.
+	 * @param maxConf
+	 *            - optional maximum number of confirmations. Default 999999.
+	 * @param address
+	 *            - optional address(es) limiting the output to transaction
+	 *            outputs paid to those addresses.
+	 * 
+	 * @return
+	 */
+	// TODO Test/fix listunspent [minconf=1] [maxconf=999999] version 0.7 Returns array of unspent transaction inputs in the wallet. N
+	public VoidResponse listUnspent(Integer minConf, Integer maxConf, String ... address) {
+		List<Object> params = newArrayList();
+		params.add(firstNotNull(minConf, Integer.valueOf(1)));
+		params.add(firstNotNull(maxConf, Integer.valueOf(999999)));
+		params.addAll(asList(address));
+		return jsonRpc("listunspent", params, VoidResponse.class);
+	}
+
+
 	// TODO listlockunspent version 0.8 Returns list of temporarily unspendable outputs
 	// TODO lockunspent <unlock?> [array-of-objects] version 0.8 Updates list of temporarily unspendable outputs
 	// TODO move <fromaccount> <toaccount> <amount> [minconf=1] [comment] Move from one account in your wallet to another N
@@ -254,7 +368,21 @@ public class BitcoinClient {
 	// TODO stop Stop bitcoin server. N
 	// TODO validateaddress <bitcoinaddress> Return information about <bitcoinaddress>. N
 	// TODO verifymessage <bitcoinaddress> <signature> <message> Verify a signed message. N
-	// TODO walletlock Removes the wallet encryption key from memory, locking the wallet. After calling this method, you will need to call walletpassphrase again before being able to call any methods which require the wallet to be unlocked. N
+
+
+	/**
+	 * Removes the wallet encryption key from memory, locking the wallet.
+	 * <p>
+	 * After calling this method, you will need to call walletPassPhrase
+	 * again before being able to call any methods which require the wallet
+	 * to be unlocked.
+	 * 
+	 * @return {@link VoidResponse}
+	 */
+	public VoidResponse walletLock() {
+		return jsonRpc("walletlock", Collections.EMPTY_LIST, VoidResponse.class);
+	}
+
 
 	/**
 	 * Unlocks the wallet for the number of seconds given.
@@ -268,13 +396,13 @@ public class BitcoinClient {
 	 *            keeping the wallet unlocked.
 	 * @return {@link VoidResponse}
 	 */
-	// TODO Works not on unencrypted wallet. Check if it works on encrypted wallet.
 	public VoidResponse walletPassPhrase(String passPhrase, int timeout) {
-		List<String> params = newArrayList();
+		List<Object> params = newArrayList();
 		params.add(passPhrase);
-		params.add(String.valueOf(timeout));
+		params.add(Integer.valueOf(timeout));
 		return jsonRpc("walletpassphrase", params, VoidResponse.class);
 	}
+
 
 	/**
 	 * Changes the wallet passphrase from <code>oldpassphrase</code> to
@@ -291,8 +419,10 @@ public class BitcoinClient {
 		return jsonRpc("walletpassphrasechange", params, VoidResponse.class);
 	}
 
+
+
 	/**
-	 * Performs a JSON-RPC call specifying the given mathod and parameters and
+	 * Performs a JSON-RPC call specifying the given method and parameters and
 	 * returning a response of the given type.
 	 * 
 	 * @param method
@@ -301,30 +431,21 @@ public class BitcoinClient {
 	 * @return json response converted to the given type
 	 */
 	private <T> T jsonRpc(String method, List<?> params, Class<T> responseType) {
-		BasicDBObject json = (new BasicDBObject()).append("jsonrpc", "2.0")
-				.append("method", method).append("params", params);
-		String request = json.toString();
-
-		//
-		// ObjectMapper om = new ObjectMapper();
-		// try {
-		// ObjectNode root = ((ObjectNode) om.readTree("{}")).put("jsonrpc",
-		// "2.0");
-		// root.put("method", method);
-		// ArrayNode paramsArrayNode = root.putArray("params");
-		// for (Object param : params) {
-		// paramsArrayNode.add((String)param);
-		// }
-		// request = om.writeValueAsString(root);
-		// } catch (IOException e) {
-		// throw new RuntimeException(e);
-		// }
-
+		String request = null;
+		try {
+			request = objectMapper.writeValueAsString(new BitcoindJsonRpcRequest(method, params));
+		} catch (JsonProcessingException e) {
+			throw new BitcoinException("JSON serialization failed.", e);
+		}
+//		"params":[0,999999,
+		request = request.replaceFirst("\"params\":\\[0,999999,", "minconf=1,maxconf=9999,\"params\":\\[");
 		return rest.postForObject(BITCOIND_URL, request, responseType);
 	}
 
+
+
 	public static void main(String[] args) {
-		new BitcoinClient().run();
+		new BitcoindClient().run();
 	}
 
 	private void run() {
@@ -332,6 +453,15 @@ public class BitcoinClient {
 
 			//			VoidResponse backupWallet = backupWallet("C:\\wallet.backup");
 			//			print(backupWallet);
+
+			//			AddressAndAmount aaa = new AddressAndAmount("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq", BigDecimal.valueOf(100000000L, 8));
+			//			@SuppressWarnings("unchecked")
+			//			CreateRawTransactionResponse createRawTransactionResponse = createRawTransaction(Collections.EMPTY_LIST, aaa, aaa);
+			//			print(createRawTransactionResponse);
+			//			
+			//			DecodeRawTransactionResponse decodeRawTransactionResponse = decodeRawTransaction(createRawTransactionResponse.getResult());
+			//			print(decodeRawTransactionResponse);
+			//			System.out.println(decodeRawTransactionResponse);
 
 			//			List<String> keys = newArrayList();
 			//			keys.add("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq");
@@ -341,16 +471,28 @@ public class BitcoinClient {
 			//			DumpPrivateKeyResponse dumpPrivateKeyResponse = dumpPrivateKey("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq");
 			//			print(dumpPrivateKeyResponse);
 
+			//			VoidResponse encryptWalletResponse = encryptWallet("popidop");
+			//			print(encryptWalletResponse);
+
 			//			GetAccountResponse getAccountResponse = getAccount("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq");
 			//			print(getAccountResponse);
 
-						GetInfoResponse info = getInfo();
-						print(info);
+			//			GetInfoResponse info = getInfo();
+			//			print(info);
 
-			//			VoidResponse walletPassPhraseResponse = walletPassPhrase("", 5);
+//			VoidResponse helpResponse = help("listunspent");
+//			print(helpResponse);
+
+			VoidResponse listUnspentResponse = listUnspent(0, 999999, "mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq", "mprSidR7coMDYzfnTXdq6taxDZyEb3fopo");
+			print(listUnspentResponse);
+
+			//			VoidResponse walletPassPhraseResponse = walletPassPhrase("popidop", 99999999);
 			//			print(walletPassPhraseResponse);
 
-			//			VoidResponse walletPassPhraseChangeResponse = walletPassPhraseChange("", "boo");
+			//			VoidResponse walletLockResponse = walletLock();
+			//			print(walletLockResponse);
+
+			//			VoidResponse walletPassPhraseChangeResponse = walletPassPhraseChange("boo", "popidop");
 			//			print(walletPassPhraseChangeResponse);
 
 		} catch (BitcoinException e) {

@@ -17,33 +17,15 @@
  */
 package dk.clanie.bitcoin.client.response;
 
-import java.math.BigDecimal;
-
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
-import dk.clanie.bitcoin.json.JsonExtra;
-
 /**
- * Data returned by getInfo.
+ * Respons object returned by decodeRawTransaction.
  * 
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public class GetInfoResult extends JsonExtra {
-
-	private Integer version;
-	private Integer protocolversion;
-	private Integer walletversion;
-	private BigDecimal balance;
-	private Integer blocks;
-	private Integer connections;
-	private String proxy;
-	private Double difficulty;
-	private Boolean testnet;
-	private Long keypoololdest;
-	private Integer keypoolsize;
-	private Double paytxfee;
-	private String errors;
+public class DecodeRawTransactionResponse extends BitcoindJsonRpcResponse<DecodeRawTransactionResult> {
 
 }

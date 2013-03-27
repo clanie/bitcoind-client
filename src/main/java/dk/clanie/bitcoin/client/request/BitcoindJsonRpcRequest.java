@@ -15,35 +15,25 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package dk.clanie.bitcoin.client.response;
+package dk.clanie.bitcoin.client.request;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
-import dk.clanie.bitcoin.json.JsonExtra;
+import dk.clanie.core.BaseClass;
 
-/**
- * Data returned by getInfo.
- * 
- * @author Claus Nielsen
- */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public class GetInfoResult extends JsonExtra {
+public class BitcoindJsonRpcRequest extends BaseClass {
 
-	private Integer version;
-	private Integer protocolversion;
-	private Integer walletversion;
-	private BigDecimal balance;
-	private Integer blocks;
-	private Integer connections;
-	private String proxy;
-	private Double difficulty;
-	private Boolean testnet;
-	private Long keypoololdest;
-	private Integer keypoolsize;
-	private Double paytxfee;
-	private String errors;
+	private String jsonrpc = "2.0";
+	private String method;
+	private List<?> params;
+	
+	public BitcoindJsonRpcRequest(String method, List<?> params) {
+		this.method = method;
+		this.params = params;
+	}
 
 }

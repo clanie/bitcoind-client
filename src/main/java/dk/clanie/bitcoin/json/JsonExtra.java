@@ -15,7 +15,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package dk.clanie.bitcoin.client.response;
+package dk.clanie.bitcoin.json;
 
 import static dk.clanie.collections.CollectionFactory.newHashMap;
 
@@ -27,28 +27,18 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 
+import dk.clanie.core.BaseClass;
+
 /**
- * A bitcoind JSON RPC error response.
+ * "MixIn" adding an otherFields map for json fields not explicitly mapped.
  * 
  * @author Claus Nielsen
  */
+@SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public class BitcoinJsonRpcErrorResponse {
-
-	private String id;
-	private BitcoinJsonRpcError error;
+public abstract class JsonExtra extends BaseClass {
 
 	private Map<String, Object> otherFields = newHashMap();
-	
-	private String xxx;
-
-
-	/**
-	 * Default constructor.
-	 */
-	public BitcoinJsonRpcErrorResponse() {
-	}
-
 
 	/**
 	 * Sets name and value of other (unknown) JSON fields.
