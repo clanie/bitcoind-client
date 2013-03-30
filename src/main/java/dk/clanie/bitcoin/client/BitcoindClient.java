@@ -46,6 +46,7 @@ import dk.clanie.bitcoin.client.response.DecodeRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.DumpPrivateKeyResponse;
 import dk.clanie.bitcoin.client.response.GetAccountResponse;
 import dk.clanie.bitcoin.client.response.GetInfoResponse;
+import dk.clanie.bitcoin.client.response.ListUnspentResponse;
 import dk.clanie.bitcoin.client.response.VoidResponse;
 import dk.clanie.bitcoin.exception.BitcoinException;
 
@@ -63,11 +64,10 @@ public class BitcoindClient {
 			+ BITCOIND_PORT;
 	private static final String BITCOIND_USER_NAME = "bitcoinrpc";
 	private static final String BITCOIND_PASSWORD = "3LUTo7SCiYmcYZuZyfkgFdLU4hSt9TDAdPQnJuvaGHoJ";
-	
+
 	// [Collaborators]
 	// TODO Make Collaborators @Autowired (configurable with defaults)	
 	private RestTemplate rest;
-	private ObjectMapper objectMapper = new ObjectMapper();
 
 
 	/**
@@ -132,18 +132,19 @@ public class BitcoindClient {
 	/**
 	 * Creates a raw transaction for spending given inputs.
 	 * 
-	 * Create a transaction spending given outputs (array of objects containing
-	 * transaction id and output number), for sending to given address(es).<br>
+	 * Create a transaction spending given {@link TransactionOutputRef}, for
+	 * sending to given address(es).<br>
 	 * Note that the transaction's inputs are not signed, and it is not stored
 	 * in the wallet or transmitted to the network.<br>
 	 * 
+	 * @param txOutputs
+	 *            - transaction outputs to spend
 	 * @param addressAndAmount
-	 * @return {@link CreateRawTransactionResponse} containing hex-encoded raw transaction.
+	 *            - recipients and amount
+	 * @return {@link CreateRawTransactionResponse} containing hex-encoded raw
+	 *         transaction.
 	 */
-	// TODO Finish createrawtransaction [{"txid":txid,"vout":n},...] {address:amount,...} version 0.7 Creates a raw transaction spending given inputs. N
 	public CreateRawTransactionResponse createRawTransaction(List<TransactionOutputRef> txOutputs, AddressAndAmount ... addressAndAmount) {
-		// TODO Define TransactionOutput ([{"txid":txid,"vout":n},...])
-		// TODO Refine CreateRawTransactionResponse
 		Map<String, BigDecimal> recipients = newHashMap();
 		for (AddressAndAmount aaa : addressAndAmount) {
 			String address = aaa.getAddress();
@@ -168,7 +169,6 @@ public class BitcoindClient {
 	 * @return {@link DecodeRawTransactionResponse}
 	 */
 	public DecodeRawTransactionResponse decodeRawTransaction(String rawTransaction) {
-		// TODO Define transactionInputs in the response
 		List<Object> params = newArrayList();
 		params.add(rawTransaction);
 		return jsonRpc("decoderawtransaction", params, DecodeRawTransactionResponse.class);
@@ -288,10 +288,11 @@ public class BitcoindClient {
 	// TODO N
 
 
-	// TODO help [command] List commands, or get help for a command. N
 	/**
+	 * Gets help for a command or lists commands.
+	 * 
 	 * @param command - optional. If null a list of available commands is returned.
-	 * @return
+	 * @return help for the given command or list of commands.
 	 */
 	public VoidResponse help(String command) {
 		List<Object> params = newArrayList();
@@ -324,12 +325,8 @@ public class BitcoindClient {
 
 	/**
 	 * Lists unspent transaction outputs with between minconf and maxconf
-	 * (inclusive) confirmations. Optionally filtered to only include txouts
-	 * paid to specified addresses.<br>
-	 * 
-	 * // Results are an array of Objects, each of which has:\n{txid, vout,
-	 * scriptPubKey, amount, confirmations
-	 * 
+	 * (inclusive) confirmations. Optionally filtered to only include transaction
+	 * outputs paid to specified addresses.<br>
 	 * 
 	 * @param minConf
 	 *            - optional minimum number of confirmations. Default 1.
@@ -339,16 +336,14 @@ public class BitcoindClient {
 	 *            - optional address(es) limiting the output to transaction
 	 *            outputs paid to those addresses.
 	 * 
-	 * @return
+	 * @return {@link ListUnspentResponse}
 	 */
-	// TODO Test/fix listunspent [minconf=1] [maxconf=999999] version 0.7 Returns array of unspent transaction inputs in the wallet. N
-	public VoidResponse listUnspent(Integer minConf, Integer maxConf, String ... address) {
+	public ListUnspentResponse listUnspent(Integer minConf, Integer maxConf, String ... address) {
 		List<Object> params = newArrayList();
 		params.add(firstNotNull(minConf, Integer.valueOf(1)));
 		params.add(firstNotNull(maxConf, Integer.valueOf(999999)));
 		params.add(address);
-		// TODO Implement more specific returntype
-		return jsonRpc("listunspent", params, VoidResponse.class);
+		return jsonRpc("listunspent", params, ListUnspentResponse.class);
 	}
 
 
@@ -431,12 +426,7 @@ public class BitcoindClient {
 	 * @return json response converted to the given type
 	 */
 	private <T> T jsonRpc(String method, List<?> params, Class<T> responseType) {
-		String request = null;
-		try {
-			request = objectMapper.writeValueAsString(new BitcoindJsonRpcRequest(method, params));
-		} catch (JsonProcessingException e) {
-			throw new BitcoinException("JSON serialization failed.", e);
-		}
+		BitcoindJsonRpcRequest request = new BitcoindJsonRpcRequest(method, params);
 		return rest.postForObject(BITCOIND_URL, request, responseType);
 	}
 
@@ -452,11 +442,12 @@ public class BitcoindClient {
 			//			VoidResponse backupWallet = backupWallet("C:\\wallet.backup");
 			//			print(backupWallet);
 
-			//			AddressAndAmount aaa = new AddressAndAmount("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq", BigDecimal.valueOf(100000000L, 8));
-			//			@SuppressWarnings("unchecked")
-			//			CreateRawTransactionResponse createRawTransactionResponse = createRawTransaction(Collections.EMPTY_LIST, aaa, aaa);
-			//			print(createRawTransactionResponse);
-			//			
+			AddressAndAmount aaa = new AddressAndAmount("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq", BigDecimal.valueOf(100000000L, 8));
+			List<TransactionOutputRef> txOuts = newArrayList();
+			txOuts.add(new TransactionOutputRef("280acc1c3611fee83331465c715b0da2d10b65733a688ee2273fdcc7581f149b", 0));
+			CreateRawTransactionResponse createRawTransactionResponse = createRawTransaction(txOuts, aaa, aaa);
+			print(decodeRawTransaction(createRawTransactionResponse.getResult()));
+
 			//			DecodeRawTransactionResponse decodeRawTransactionResponse = decodeRawTransaction(createRawTransactionResponse.getResult());
 			//			print(decodeRawTransactionResponse);
 			//			System.out.println(decodeRawTransactionResponse);
@@ -478,11 +469,11 @@ public class BitcoindClient {
 			//			GetInfoResponse info = getInfo();
 			//			print(info);
 
-//			VoidResponse helpResponse = help("listunspent");
-//			print(helpResponse);
+			//			VoidResponse helpResponse = help("listunspent");
+			//			print(helpResponse);
 
-			VoidResponse listUnspentResponse = listUnspent(0, 999999, "mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq", "mprSidR7coMDYzfnTXdq6taxDZyEb3fopo");
-			print(listUnspentResponse);
+			//			ListUnspentResponse listUnspentResponse = listUnspent(0, 999999, "mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq", "mprSidR7coMDYzfnTXdq6taxDZyEb3fopo");
+			//			print(listUnspentResponse);
 
 			//			VoidResponse walletPassPhraseResponse = walletPassPhrase("popidop", 99999999);
 			//			print(walletPassPhraseResponse);

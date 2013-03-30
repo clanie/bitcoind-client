@@ -1,5 +1,4 @@
-/**
- * Copyright (C) 2013, Claus Nielsen, cn@cn-consult.dk
+/* Copyright (C) 2013, Claus Nielsen, cn@cn-consult.dk
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,33 +16,24 @@
  */
 package dk.clanie.bitcoin.client.response;
 
+import java.math.BigDecimal;
+
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
-import dk.clanie.bitcoin.TransactionInput;
-import dk.clanie.bitcoin.TransactionOutput;
+import dk.clanie.bitcoin.TransactionOutputRef;
 import dk.clanie.bitcoin.json.JsonExtra;
 
-/**
- * Decoded raw transaction.
- * 
- * @author Claus Nielsen
- */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public class DecodeRawTransactionResult extends JsonExtra {
+public class ListUnspentResult extends JsonExtra {
 
-	@JsonProperty("txid")
-	private String txId;
+	@JsonUnwrapped
+	private TransactionOutputRef txRef;
 
-	private Integer version;
-	private Integer locktime;
-
-	@JsonProperty("vin")
-	private TransactionInput[] txInputs;
-	
-	@JsonProperty("vout")
-	private TransactionOutput[] txOutputs;
+	private String scriptPubKey;
+	private BigDecimal amount;
+	private Integer confirmations;
 
 }

@@ -30,5 +30,5 @@ public class TransactionOutput extends BaseClass {
 	private BigDecimal value;
 	private Integer n;
 	private ScriptPubKey scriptPubKey; 
-	
+
 }

@@ -19,6 +19,9 @@ package dk.clanie.bitcoin;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import dk.clanie.core.BaseClass;
 
 /**
@@ -34,8 +37,25 @@ import dk.clanie.core.BaseClass;
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
+@JsonPropertyOrder({"txid", "vout"})
 public class TransactionOutputRef extends BaseClass {
 
-	// TODO Define TransactionOutput
+	@JsonProperty("txid")
+	private String txId;
+	
+	@JsonProperty("vout")
+	private Integer vout;
 
+	/**
+	 * Full constructor.
+	 * 
+	 * @param txId - transaction id.
+	 * @param vout - output number.
+	 */
+	public TransactionOutputRef(@JsonProperty("txid") String txId, @JsonProperty("vout") Integer vout) {
+		this.txId = txId;
+		this.vout = vout;
+	}
+
+	
 }

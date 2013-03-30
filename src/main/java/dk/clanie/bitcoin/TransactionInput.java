@@ -19,12 +19,18 @@ package dk.clanie.bitcoin;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+
 import dk.clanie.core.BaseClass;
 
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
 public class TransactionInput extends BaseClass {
 
-	// TODO Define TransactionInput
+	@JsonUnwrapped
+	private TransactionOutputRef txRef;
+	
+	private ScriptSig scriptSig;
+	private Long sequence;
 
 }

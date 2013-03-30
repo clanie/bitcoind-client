@@ -6,7 +6,6 @@ package dk.clanie.bitcoin.client.response;
 import dk.clanie.bitcoin.TransactionInput;
 import dk.clanie.bitcoin.TransactionOutput;
 import dk.clanie.bitcoin.client.response.DecodeRawTransactionResult;
-import java.util.List;
 
 privileged aspect DecodeRawTransactionResult_Roo_JavaBean {
     
@@ -22,11 +21,11 @@ privileged aspect DecodeRawTransactionResult_Roo_JavaBean {
         return this.locktime;
     }
     
-    public List<TransactionInput> DecodeRawTransactionResult.getTxInputs() {
+    public TransactionInput[] DecodeRawTransactionResult.getTxInputs() {
         return this.txInputs;
     }
     
-    public List<TransactionOutput> DecodeRawTransactionResult.getTxOutputs() {
+    public TransactionOutput[] DecodeRawTransactionResult.getTxOutputs() {
         return this.txOutputs;
     }
     

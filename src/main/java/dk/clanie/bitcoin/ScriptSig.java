@@ -15,35 +15,17 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package dk.clanie.bitcoin.client.response;
+package dk.clanie.bitcoin;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import dk.clanie.core.BaseClass;
 
-import dk.clanie.bitcoin.TransactionInput;
-import dk.clanie.bitcoin.TransactionOutput;
-import dk.clanie.bitcoin.json.JsonExtra;
-
-/**
- * Decoded raw transaction.
- * 
- * @author Claus Nielsen
- */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public class DecodeRawTransactionResult extends JsonExtra {
+public class ScriptSig extends BaseClass {
 
-	@JsonProperty("txid")
-	private String txId;
-
-	private Integer version;
-	private Integer locktime;
-
-	@JsonProperty("vin")
-	private TransactionInput[] txInputs;
-	
-	@JsonProperty("vout")
-	private TransactionOutput[] txOutputs;
+	private String asm;
+	private String hex;
 
 }

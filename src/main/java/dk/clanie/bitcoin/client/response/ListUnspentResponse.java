@@ -19,31 +19,16 @@ package dk.clanie.bitcoin.client.response;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import dk.clanie.bitcoin.TransactionInput;
-import dk.clanie.bitcoin.TransactionOutput;
-import dk.clanie.bitcoin.json.JsonExtra;
-
 /**
- * Decoded raw transaction.
- * 
+ * Response object returned by listUnspent.
+ *
+ * Holds an array of {@link ListUnspentResult} objects, each of which has data
+ * obaout one ounspent transaction output.
+ *
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public class DecodeRawTransactionResult extends JsonExtra {
-
-	@JsonProperty("txid")
-	private String txId;
-
-	private Integer version;
-	private Integer locktime;
-
-	@JsonProperty("vin")
-	private TransactionInput[] txInputs;
-	
-	@JsonProperty("vout")
-	private TransactionOutput[] txOutputs;
+public class ListUnspentResponse extends BitcoindJsonRpcResponse<ListUnspentResult[]> {
 
 }
