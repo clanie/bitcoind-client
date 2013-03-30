@@ -15,25 +15,33 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package dk.clanie.bitcoin.client.response;
+package dk.clanie.bitcoin.client;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-
-import dk.clanie.bitcoin.json.JsonExtra;
+import org.mockito.Mockito;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 /**
- * A bitcoind JSON RPC response.
+ * BitcoindClient configuration for isolated unit testing.
  * 
  * @author Claus Nielsen
- *
- * @param <T> type of the result field.
  */
-@SuppressWarnings("serial")
-@RooJavaBean(settersByDefault = false)
-public abstract class BitcoindJsonRpcResponse<T> extends JsonExtra {
+@Configuration
+public class BitcoindClientTestConfig {
 
-	private String id;
-	private T result;
-	private String error;
+	private static final String BITCOIND_HOST = "localhost";
+	private static final int BITCOIND_PORT = 18332;
 
+	@Bean
+	public BitcoindClient getBitcoindClient() {
+		BitcoindClient bitcoindClient = new BitcoindClient();
+		bitcoindClient.setUrl("http://" + BITCOIND_HOST + ":" + BITCOIND_PORT);
+		return bitcoindClient;
+	}
+
+	@Bean
+	public RestTemplate getRestTemplate() {
+		return Mockito.mock(RestTemplate.class);
+	}
 }

@@ -19,7 +19,12 @@ package dk.clanie.bitcoin.client.response;
 
 
 
+/**
+ * Common response object used for methods returning a simple String response.
+ * 
+ * @author Claus Nielsen
+ */
 @SuppressWarnings("serial")
-public class VoidResponse extends BitcoindJsonRpcResponse<String> {
+public class StringResponse extends BitcoindJsonRpcResponse<String> {
 
 }

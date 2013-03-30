@@ -15,4 +15,8 @@ privileged aspect BitcoindJsonRpcResponse_Roo_JavaBean {
         return this.result;
     }
     
+    public String BitcoindJsonRpcResponse.getError() {
+        return this.error;
+    }
+    
 }
