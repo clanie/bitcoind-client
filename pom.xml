@@ -12,7 +12,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>Bitcoind (bitcoind) Client</name>
+	<name>Bitcoind Client</name>
 	<description>A client library for communicating with bitcoind.</description>
 	<inceptionYear>2013</inceptionYear>
 
