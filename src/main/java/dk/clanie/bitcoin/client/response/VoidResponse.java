@@ -19,7 +19,12 @@ package dk.clanie.bitcoin.client.response;
 
 
 
+/**
+ * Response type used for methods not expected to return a result.
+ * 
+ * @author Claus Nielsen
+ */
 @SuppressWarnings("serial")
-public class VoidResponse extends BitcoindJsonRpcResponse<String> {
+public class VoidResponse extends BitcoindJsonRpcResponse<String, String> {
 
 }

@@ -73,7 +73,7 @@
 							may have undesired consequences as -->
 						<!-- aj compiler now runs before eg. maven-resources-plugin:testResources 
 							and that's not the expected order -->
-						<!--  phase>process-sources</phase -->
+						<!-- phase>process-sources</phase -->
 						<phase>compile</phase>
 						<goals>
 							<goal>compile</goal>
@@ -93,6 +93,16 @@
 						<version>${version.aspectj}</version>
 					</dependency>
 				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.14</version>
+				<configuration>
+					<excludes>
+						<exclude>**/*IntegrationTest.java</exclude>
+					</excludes>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -258,12 +268,8 @@
 				</exclusions>
 			</dependency>
 
-<!-- 			<dependency>
-				<groupId>org.mongodb</groupId>
-				<artifactId>mongo-java-driver</artifactId>
-				<version>2.11.0</version>
-			</dependency>
- -->
+			<!-- <dependency> <groupId>org.mongodb</groupId> <artifactId>mongo-java-driver</artifactId> 
+				<version>2.11.0</version> </dependency> -->
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
@@ -348,11 +354,8 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 		</dependency>
-<!-- 		<dependency>
-			<groupId>org.mongodb</groupId>
-			<artifactId>mongo-java-driver</artifactId>
-		</dependency>
- -->
+		<!-- <dependency> <groupId>org.mongodb</groupId> <artifactId>mongo-java-driver</artifactId> 
+			</dependency> -->
 		<!-- Test dependencies -->
 		<dependency>
 			<groupId>junit</groupId>

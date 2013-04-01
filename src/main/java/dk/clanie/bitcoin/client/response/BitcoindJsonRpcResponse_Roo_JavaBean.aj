@@ -7,16 +7,16 @@ import dk.clanie.bitcoin.client.response.BitcoindJsonRpcResponse;
 
 privileged aspect BitcoindJsonRpcResponse_Roo_JavaBean {
     
-    public String BitcoindJsonRpcResponse.getId() {
-        return this.id;
-    }
-    
-    public T BitcoindJsonRpcResponse.getResult() {
+    public RT BitcoindJsonRpcResponse.getResult() {
         return this.result;
     }
     
-    public String BitcoindJsonRpcResponse.getError() {
+    public ET BitcoindJsonRpcResponse.getError() {
         return this.error;
+    }
+    
+    public String BitcoindJsonRpcResponse.getId() {
+        return this.id;
     }
     
 }

@@ -25,6 +25,11 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import dk.clanie.bitcoin.TransactionOutputRef;
 import dk.clanie.bitcoin.json.JsonExtra;
 
+/**
+ * Data about one unspent transaction output.
+ * 
+ * @author Claus Nielsen
+ */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
 public class ListUnspentResult extends JsonExtra {

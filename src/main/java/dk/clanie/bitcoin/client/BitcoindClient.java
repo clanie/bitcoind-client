@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Service;
@@ -34,11 +35,7 @@ import org.springframework.web.client.RestTemplate;
 import dk.clanie.bitcoin.AddressAndAmount;
 import dk.clanie.bitcoin.TransactionOutputRef;
 import dk.clanie.bitcoin.client.request.BitcoindJsonRpcRequest;
-import dk.clanie.bitcoin.client.response.AddMultiSigAddressResponse;
-import dk.clanie.bitcoin.client.response.CreateRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.DecodeRawTransactionResponse;
-import dk.clanie.bitcoin.client.response.DumpPrivateKeyResponse;
-import dk.clanie.bitcoin.client.response.GetAccountResponse;
 import dk.clanie.bitcoin.client.response.GetInfoResponse;
 import dk.clanie.bitcoin.client.response.ListUnspentResponse;
 import dk.clanie.bitcoin.client.response.StringResponse;
@@ -89,20 +86,27 @@ public class BitcoindClient {
 	 * @param nrequired - number of signatures required.
 	 * @param keys - keys which may sign. Each is a bitcoin address or a hex-encoded public key.
 	 * @param account optional. If given the new address is assigned to this account.
-	 * @return {@link AddMultiSigAddressResponse}.
+	 * @return {@link StringResponse}.
 	 */
-	public AddMultiSigAddressResponse addMultiSigAddress(int nrequired, List<String> keys, String account) {
-		// TODO test/fix - so far always fails with "no full public key for address mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq"
-		// addmultisigaddress <nrequired> <'["key","key"]'> [account] 
+	public StringResponse addMultiSigAddress(int nrequired, List<String> keys, String account) {
 		List<Object> params = newArrayList();
 		params.add(nrequired);
 		params.add(keys);
 		if (account != null) params.add(account);
-		return jsonRpc("addmultisigaddress", params, AddMultiSigAddressResponse.class);
+		return jsonRpc("addmultisigaddress", params, StringResponse.class);
 	}
 
 
-	// TODO addnode remove|onetry> version 0.8 Attempts add or remove <node> from the addnode list or try a connection to <node> once. N
+	/**
+	 * Attempts add or remove <node> from the addnode list or try a connection
+	 * to &lt;node&gt; once.
+	 * 
+	 * @return
+	 */
+	// TODO addnode <node> <add|remove|onetry>
+	public VoidResponse addNode() {
+		throw new NotImplementedException("addNode yet not implemented.");
+	}
 
 
 	/**
@@ -133,10 +137,10 @@ public class BitcoindClient {
 	 *            - transaction outputs to spend
 	 * @param addressAndAmount
 	 *            - recipients and amount
-	 * @return {@link CreateRawTransactionResponse} containing hex-encoded raw
+	 * @return {@link StringResponse} containing hex-encoded raw
 	 *         transaction.
 	 */
-	public CreateRawTransactionResponse createRawTransaction(List<TransactionOutputRef> txOutputs, AddressAndAmount ... addressAndAmount) {
+	public StringResponse createRawTransaction(List<TransactionOutputRef> txOutputs, AddressAndAmount ... addressAndAmount) {
 		Map<String, BigDecimal> recipients = newHashMap();
 		for (AddressAndAmount aaa : addressAndAmount) {
 			String address = aaa.getAddress();
@@ -149,7 +153,7 @@ public class BitcoindClient {
 		List<Object> params = newArrayList();
 		params.add(txOutputs);
 		params.add(recipients);
-		return jsonRpc("createrawtransaction", params, CreateRawTransactionResponse.class);
+		return jsonRpc("createrawtransaction", params, StringResponse.class);
 
 	}
 
@@ -173,13 +177,13 @@ public class BitcoindClient {
 	 * Requires unlocked wallet.
 	 * 
 	 * @param bitcoinAddress
-	 * @return {@link DumpPrivateKeyResponse}
+	 * @return {@link StringResponse}
 	 */
-	public DumpPrivateKeyResponse dumpPrivateKey(String bitcoinAddress) {
+	public StringResponse dumpPrivateKey(String bitcoinAddress) {
 		// TODO Make dumpPrivateKey work!
 		List<String> params = newArrayList();
 		params.add(bitcoinAddress);
-		return jsonRpc("dumpprivkey", params, DumpPrivateKeyResponse.class);
+		return jsonRpc("dumpprivkey", params, StringResponse.class);
 	}
 
 
@@ -189,10 +193,10 @@ public class BitcoindClient {
 	 * @param passPhrase
 	 * @return {@link VoidResponse}
 	 */
-	public StringResponse encryptWallet(String passPhrase) {
+	public VoidResponse encryptWallet(String passPhrase) {
 		List<String> params = newArrayList();
 		params.add(passPhrase);
-		return jsonRpc("encryptwallet", params, StringResponse.class);
+		return jsonRpc("encryptwallet", params, VoidResponse.class);
 	}
 
 
@@ -200,24 +204,55 @@ public class BitcoindClient {
 	 * Returns the account associated with the given address.
 	 * 
 	 * @param bitcoinAddress
-	 * @return {@link GetAccountResponse}
+	 * @return {@link StringResponse}
 	 */
-	public GetAccountResponse getAccount(String bitcoinAddress) {
+	public StringResponse getAccount(String bitcoinAddress) {
 		List<String> params = newArrayList();
 		params.add(bitcoinAddress);
-		return jsonRpc("getaccount", params, GetAccountResponse.class);
+		return jsonRpc("getaccount", params, StringResponse.class);
 	}
 
-	// TODO getaccountaddress <account> Returns the current bitcoin address for receiving payments to this account. N
-	// TODO getaddednodeinfo <dns> [node] version 0.8 Returns information about the given added node, or all added nodes
-	// TODO (note that onetry addnodes are not listed here) If dns is false, only a list of added nodes will be provided, otherwise connected information will also be available.
+	/**
+	 * Gets the current bitcoin address for receiving payments to the given account.
+	 * 
+	 * @param account
+	 * @return {@link StringResponse}
+	 */
+	public StringResponse getAccountAddress(String account) {
+		List<String> params = newArrayList();
+		params.add(account);
+		return jsonRpc("getaccountaddress", params, StringResponse.class);
+	}
+
+
+	/**
+	 * Returns information about the given added node, or all added nodes (note
+	 * that onetry addnodes are not listed here). If dns is false, only a list
+	 * of added nodes will be provided, otherwise connected information will
+	 * also be available.
+	 * 
+	 * @param dns
+	 * @param node
+	 *            - optional
+	 * @return
+	 * 
+	 * @since bitcoind 0.8
+	 */
+	// TODO getaddednodeinfo <dns> [node] 
+	public StringResponse getAddedNodeInfo(Boolean dns, Object node) {
+		// TODO Use specific response-type(s). When calling with dns=false an oject is returned; when calling ith dns=true an array is returned.
+		List<Object> params = newArrayList();
+		params.add(dns);
+		return jsonRpc("getaddednodeinfo", params, StringResponse.class);
+	}
+
+
 	// TODO getaddressesbyaccount <account> Returns the list of addresses for the given account. N
 	// TODO getbalance [account] [minconf=1] If [account] is not specified, returns the server's total available balance.
 	// TODO If [account] is specified, returns the balance in the account. N
 	// TODO getblock <hash> Returns information about the given block hash. N
 	// TODO getblockcount Returns the number of blocks in the longest block chain. N
 	// TODO getblockhash <index> Returns hash of block in best-block-chain at <index> N
-	// TODO getblocknumber Deprecated. Removed in version 0.7. Use getblockcount. N
 	// TODO getconnectioncount Returns the number of connections to other nodes. N
 	// TODO getdifficulty Returns the proof-of-work difficulty as a multiple of the minimum difficulty. N
 	// TODO getgenerate Returns true or false whether bitcoind is currently generating hashes N
@@ -299,7 +334,29 @@ public class BitcoindClient {
 	}
 
 
-	// TODO importprivkey <bitcoinprivkey> [label] [rescan=true] Adds a private key (as returned by dumpprivkey) to your wallet. This may take a while, as a rescan is done, looking for existing transactions. Optional [rescan] parameter added in 0.8.0. Y
+	/**
+	 * Adds a private key (as returned by dumpPrivKey) to the wallet. This may
+	 * take a while, as a rescan is done, looking for existing transactions.
+	 * Optional [rescan] parameter added in 0.8.0.
+	 * <p>
+	 * Requires unlocked wallet.
+	 * 
+	 * @param key
+	 * @param label
+	 *            - optional label
+	 * @param rescan
+	 *            - optional, default true.
+	 * @return {@link VoidResponse}
+	 */
+	public VoidResponse importPrivateKey(String key, String label, Boolean rescan) {
+		List<Object> params = newArrayList();
+		params.add(key);
+		if (label != null || rescan != null) params.add(label);
+		if (rescan != null) params.add(rescan);
+		return jsonRpc("importprivkey", params, VoidResponse.class);
+	}
+
+
 	// TODO keypoolrefill Fills the keypool, requires wallet passphrase to be set. Y
 	// TODO listaccounts [minconf=1] Returns Object that has account names as keys, account balances as values. N
 	// TODO listaddressgroupings version 0.7 Returns all addresses in the wallet and info used for coincontrol. N

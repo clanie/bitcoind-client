@@ -5,6 +5,7 @@ package dk.clanie.bitcoin.client.response;
 
 import dk.clanie.bitcoin.client.response.GetInfoResult;
 import java.math.BigDecimal;
+import java.util.Date;
 
 privileged aspect GetInfoResult_Roo_JavaBean {
     
@@ -12,12 +13,12 @@ privileged aspect GetInfoResult_Roo_JavaBean {
         return this.version;
     }
     
-    public Integer GetInfoResult.getProtocolversion() {
-        return this.protocolversion;
+    public Integer GetInfoResult.getProtocolVersion() {
+        return this.protocolVersion;
     }
     
-    public Integer GetInfoResult.getWalletversion() {
-        return this.walletversion;
+    public Integer GetInfoResult.getWalletVersion() {
+        return this.walletVersion;
     }
     
     public BigDecimal GetInfoResult.getBalance() {
@@ -44,20 +45,24 @@ privileged aspect GetInfoResult_Roo_JavaBean {
         return this.testnet;
     }
     
-    public Long GetInfoResult.getKeypoololdest() {
-        return this.keypoololdest;
+    public Long GetInfoResult.getKeyPoolOldest() {
+        return this.keyPoolOldest;
     }
     
-    public Integer GetInfoResult.getKeypoolsize() {
-        return this.keypoolsize;
+    public Integer GetInfoResult.getKeyPoolSize() {
+        return this.keyPoolSize;
     }
     
-    public Double GetInfoResult.getPaytxfee() {
-        return this.paytxfee;
+    public BigDecimal GetInfoResult.getPayTxFee() {
+        return this.payTxFee;
     }
     
     public String GetInfoResult.getErrors() {
         return this.errors;
+    }
+    
+    public Date GetInfoResult.getUnlockedUntil() {
+        return this.unlockedUntil;
     }
     
 }

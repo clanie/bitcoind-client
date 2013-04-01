@@ -20,12 +20,12 @@ package dk.clanie.bitcoin.client.response;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
 /**
- * Respons object returned by decodeRawTransaction.
+ * Response object returned by decodeRawTransaction.
  * 
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public class DecodeRawTransactionResponse extends BitcoindJsonRpcResponse<DecodeRawTransactionResult> {
+public class DecodeRawTransactionResponse extends BitcoindJsonRpcResponse<DecodeRawTransactionResult, String> {
 
 }

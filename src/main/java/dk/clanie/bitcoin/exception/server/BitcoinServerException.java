@@ -17,7 +17,7 @@
  */
 package dk.clanie.bitcoin.exception.server;
 
-import dk.clanie.bitcoin.client.response.BitcoindJsonRpcErrorResponse;
+import dk.clanie.bitcoin.client.response.BitcoindErrorResponse;
 import dk.clanie.bitcoin.exception.BitcoinException;
 
 /**
@@ -28,7 +28,7 @@ import dk.clanie.bitcoin.exception.BitcoinException;
 @SuppressWarnings("serial")
 public class BitcoinServerException extends BitcoinException {
 
-	public BitcoinServerException(BitcoindJsonRpcErrorResponse errorResponse) {
+	public BitcoinServerException(BitcoindErrorResponse errorResponse) {
 		super(errorResponse);
 	}
 

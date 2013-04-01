@@ -31,7 +31,7 @@ import org.springframework.web.client.UnknownHttpStatusCodeException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import dk.clanie.bitcoin.client.response.BitcoindJsonRpcErrorResponse;
+import dk.clanie.bitcoin.client.response.BitcoindErrorResponse;
 import dk.clanie.bitcoin.exception.BitcoinException;
 import dk.clanie.bitcoin.exception.client.BitcoinClientException;
 import dk.clanie.bitcoin.exception.client.MethodNotFoundException;
@@ -45,7 +45,7 @@ import dk.clanie.bitcoin.exception.server.WalletEncryptionException;
  * When bitcoind returns an client- or server-error response (an HTTP 4xx
  * or 5xx response) this handler will throw an BitcoinClient- or
  * BitcoinServerException including the response body as an {@link
- * BitcoindJsonRpcErrorResponse}.<br>
+ * BitcoindErrorResponse}.<br>
  * If the response body isn't valid JSON, or if parsing it fails for
  * any reason, an BitcoinException is thrown. It will indicate which
  * HTTP status code was received.
@@ -65,7 +65,7 @@ public class BitcoindJsonRpcErrorHandler extends DefaultResponseErrorHandler {
 		HttpStatus statusCode = getHttpStatusCode(response);
 		switch (statusCode.series()) {
 		case SERVER_ERROR: {
-			BitcoindJsonRpcErrorResponse errorResponse = parseResponse(response, statusCode);
+			BitcoindErrorResponse errorResponse = parseResponse(response, statusCode);
 			switch (errorResponse.getError().getCode()) {
 			// Comments are observed error messages for each code.
 			case -1:
@@ -76,6 +76,7 @@ public class BitcoindJsonRpcErrorHandler extends DefaultResponseErrorHandler {
 			case -4:
 				// Private key for address <bitcoinaddress> is not known
 				// Wallet backup failed!
+				// Error adding key to wallet
 				throw new BitcoinServerException(errorResponse);
 			case -5:
 				// Invalid Bitcoin address
@@ -95,7 +96,7 @@ public class BitcoindJsonRpcErrorHandler extends DefaultResponseErrorHandler {
 			}
 		}
 		case CLIENT_ERROR: {
-			BitcoindJsonRpcErrorResponse errorResponse = parseResponse(response, statusCode);
+			BitcoindErrorResponse errorResponse = parseResponse(response, statusCode);
 			switch (errorResponse.getError().getCode()) {
 			case -32601:
 				// Method not found
@@ -124,10 +125,10 @@ public class BitcoindJsonRpcErrorHandler extends DefaultResponseErrorHandler {
 	 * @return BitcoinJsonRpcErrorResponse
 	 * @throws BitcoinException
 	 */
-	private BitcoindJsonRpcErrorResponse parseResponse(ClientHttpResponse response, HttpStatus statusCode) {
+	private BitcoindErrorResponse parseResponse(ClientHttpResponse response, HttpStatus statusCode) {
 		String body = new String(getResponseBody(response), getCharset(response));
 		try {
-			return objectMapper.readValue(body, BitcoindJsonRpcErrorResponse.class);
+			return objectMapper.readValue(body, BitcoindErrorResponse.class);
 		} catch (IOException ioe) {
 			throw new BitcoinException("Received an HTTP " + statusCode.value() + " " + statusCode.getReasonPhrase() + ". Response parsing failed.", ioe);
 		}

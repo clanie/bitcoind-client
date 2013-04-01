@@ -26,14 +26,15 @@ import dk.clanie.bitcoin.json.JsonExtra;
  * 
  * @author Claus Nielsen
  *
- * @param <T> type of the result field.
+ * @param <RT> type of the result field.
+ * @param <ET> type of the error field.
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public abstract class BitcoindJsonRpcResponse<T> extends JsonExtra {
+public abstract class BitcoindJsonRpcResponse<RT, ET> extends JsonExtra {
 
+	private RT result;
+	private ET error;
 	private String id;
-	private T result;
-	private String error;
 
 }

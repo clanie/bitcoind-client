@@ -18,8 +18,12 @@
 package dk.clanie.bitcoin.client.response;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import dk.clanie.bitcoin.json.JsonExtra;
 
@@ -30,20 +34,51 @@ import dk.clanie.bitcoin.json.JsonExtra;
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
+@JsonPropertyOrder({
+	"version", 
+	"protocolversion", 
+	"walletversion",
+	"balance",
+	"blocks",
+	"connections",
+	"proxy",
+	"difficulty",
+	"testnet",
+	"keypoololdest",
+	"keypoolsize",
+	"paytxfee",
+	"errors",
+	"unlocked_until"
+})
 public class GetInfoResult extends JsonExtra {
 
 	private Integer version;
-	private Integer protocolversion;
-	private Integer walletversion;
+	
+	@JsonProperty("protocolversion")
+	private Integer protocolVersion;
+	
+	@JsonProperty("walletversion")
+	private Integer walletVersion;
+	
 	private BigDecimal balance;
 	private Integer blocks;
 	private Integer connections;
 	private String proxy;
 	private Double difficulty;
 	private Boolean testnet;
-	private Long keypoololdest;
-	private Integer keypoolsize;
-	private Double paytxfee;
+	
+	@JsonProperty("keypoololdest")
+	private Long keyPoolOldest;
+	
+	@JsonProperty("keypoolsize")
+	private Integer keyPoolSize;
+	
+	@JsonProperty("paytxfee")
+	private BigDecimal payTxFee;
+
 	private String errors;
+	
+	@JsonProperty("unlocked_until")
+	private Date unlockedUntil;
 
 }

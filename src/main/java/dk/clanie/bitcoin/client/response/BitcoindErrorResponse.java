@@ -19,8 +19,13 @@ package dk.clanie.bitcoin.client.response;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
+/**
+ * A bitcoind JSON RPC error response.
+ * 
+ * @author Claus Nielsen
+ */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public class CreateRawTransactionResponse extends BitcoindJsonRpcResponse<String> {
+public class BitcoindErrorResponse extends BitcoindJsonRpcResponse<String, BitcoindError> {
 
 }

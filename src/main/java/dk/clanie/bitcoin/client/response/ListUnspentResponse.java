@@ -23,12 +23,12 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
  * Response object returned by listUnspent.
  *
  * Holds an array of {@link ListUnspentResult} objects, each of which has data
- * obaout one ounspent transaction output.
+ * about one unspent transaction output.
  *
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public class ListUnspentResponse extends BitcoindJsonRpcResponse<ListUnspentResult[]> {
+public class ListUnspentResponse extends BitcoindJsonRpcResponse<ListUnspentResult[], String> {
 
 }

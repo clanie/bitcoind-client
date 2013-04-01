@@ -17,7 +17,7 @@
  */
 package dk.clanie.bitcoin.exception.server;
 
-import dk.clanie.bitcoin.client.response.BitcoindJsonRpcErrorResponse;
+import dk.clanie.bitcoin.client.response.BitcoindErrorResponse;
 
 /**
  * Indicates that an operation could not be performed on the wallet because it wasn't encrypted.
@@ -28,7 +28,7 @@ import dk.clanie.bitcoin.client.response.BitcoindJsonRpcErrorResponse;
 public class WalletEncryptionException extends BitcoinServerException {
 
 
-	public WalletEncryptionException(BitcoindJsonRpcErrorResponse errorResponse) {
+	public WalletEncryptionException(BitcoindErrorResponse errorResponse) {
 		super(errorResponse);
 	}
 

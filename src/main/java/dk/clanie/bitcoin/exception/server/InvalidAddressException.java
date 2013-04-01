@@ -17,7 +17,7 @@
  */
 package dk.clanie.bitcoin.exception.server;
 
-import dk.clanie.bitcoin.client.response.BitcoindJsonRpcErrorResponse;
+import dk.clanie.bitcoin.client.response.BitcoindErrorResponse;
 
 /**
  * Thrown when trying to use an invalid bitcoin address.
@@ -28,7 +28,7 @@ import dk.clanie.bitcoin.client.response.BitcoindJsonRpcErrorResponse;
 public class InvalidAddressException extends BitcoinServerException {
 
 
-	public InvalidAddressException(BitcoindJsonRpcErrorResponse errorResponse) {
+	public InvalidAddressException(BitcoindErrorResponse errorResponse) {
 		super(errorResponse);
 	}
 

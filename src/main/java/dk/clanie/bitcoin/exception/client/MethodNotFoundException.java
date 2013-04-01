@@ -17,7 +17,7 @@
  */
 package dk.clanie.bitcoin.exception.client;
 
-import dk.clanie.bitcoin.client.response.BitcoindJsonRpcErrorResponse;
+import dk.clanie.bitcoin.client.response.BitcoindErrorResponse;
 
 /**
  * Thrown when calling a non-existing json-rpc method.
@@ -28,7 +28,7 @@ import dk.clanie.bitcoin.client.response.BitcoindJsonRpcErrorResponse;
 public class MethodNotFoundException extends BitcoinClientException {
 
 
-	public MethodNotFoundException(BitcoindJsonRpcErrorResponse errorResponse) {
+	public MethodNotFoundException(BitcoindErrorResponse errorResponse) {
 		super(errorResponse);
 	}
 
