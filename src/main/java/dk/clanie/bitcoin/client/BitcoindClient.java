@@ -38,6 +38,7 @@ import dk.clanie.bitcoin.TransactionOutputRef;
 import dk.clanie.bitcoin.client.request.BitcoindJsonRpcRequest;
 import dk.clanie.bitcoin.client.response.DecodeRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.GetInfoResponse;
+import dk.clanie.bitcoin.client.response.GetTransactionResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAccountResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAddressResponse;
 import dk.clanie.bitcoin.client.response.ListUnspentResponse;
@@ -300,18 +301,19 @@ public class BitcoindClient {
 	// TODO getreceivedbyaccount [account] [minconf=1] Returns the total amount received by addresses with [account] in transactions with at least [minconf] confirmations. If [account] not provided return will include all transactions to all accounts. (version 0.3.24) N
 	// TODO getreceivedbyaddress <bitcoinaddress> [minconf=1] Returns the total amount received by <bitcoinaddress> in transactions with at least [minconf] confirmations. While some might consider this obvious, value reported by this only considers *receiving* transactions. It does not check payments that have been made *from* this address. In other words, this is not "getaddressbalance". Works only for addresses in the local wallet, external addresses will always show 0. N
 	
-	// TODO gettransaction <txid> Returns an object about the given transaction containing:
-	// TODO "amount" : total amount of the transaction
-	// TODO "confirmations" : number of confirmations of the transaction
-	// TODO "txid" : the transaction ID
-	// TODO "time" : time the transaction occurred
-	// TODO "details" - An array of objects containing:
-	// TODO "account"
-	// TODO "address"
-	// TODO "category"
-	// TODO "amount"
-	// TODO "fee"
-	// TODO N
+
+	/**
+	 * Gets data regarding the transaction with the given id.
+	 * 
+	 * @param txId - transaction id
+	 * @return {@link GetTransactionResponse}
+	 */
+	public GetTransactionResponse getTransaction(String txId) {
+		List<String> params = newArrayList();
+		params.add(txId);
+		return jsonRpc("gettransaction", params, GetTransactionResponse.class);
+	}
+
 
 	// TODO getwork [data] If [data] is not specified, returns formatted hash data to work on:
 	// TODO "midstate" : precomputed hash state after hashing the first half of the data
