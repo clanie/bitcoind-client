@@ -34,6 +34,7 @@ import dk.clanie.bitcoin.AddressAndAmount;
 import dk.clanie.bitcoin.TransactionOutputRef;
 import dk.clanie.bitcoin.client.response.DecodeRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.GetInfoResponse;
+import dk.clanie.bitcoin.client.response.GetMiningInfoResponse;
 import dk.clanie.bitcoin.client.response.GetTransactionResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAccountResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAddressResponse;
@@ -140,6 +141,13 @@ public class BitcoindClientIntegrationTest {
 	@Test
 	public void testGetInfo() throws Exception {
 		GetInfoResponse info = bc.getInfo();
+		print(info);
+	}
+
+
+	@Test
+	public void testGetMiningInfo() throws Exception {
+		GetMiningInfoResponse info = bc.getMiningInfo();
 		print(info);
 	}
 

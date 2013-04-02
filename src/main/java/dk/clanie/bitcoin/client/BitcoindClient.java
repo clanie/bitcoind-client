@@ -38,6 +38,7 @@ import dk.clanie.bitcoin.TransactionOutputRef;
 import dk.clanie.bitcoin.client.request.BitcoindJsonRpcRequest;
 import dk.clanie.bitcoin.client.response.DecodeRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.GetInfoResponse;
+import dk.clanie.bitcoin.client.response.GetMiningInfoResponse;
 import dk.clanie.bitcoin.client.response.GetTransactionResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAccountResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAddressResponse;
@@ -281,18 +282,16 @@ public class BitcoindClient {
 	// TODO If [data] is specified, tries to solve the block and returns true if it was successful.
 	// TODO N
 
-	// TODO getmininginfo Returns an object containing mining-related information:
-	// TODO blocks
-	// TODO currentblocksize
-	// TODO currentblocktx
-	// TODO difficulty
-	// TODO errors
-	// TODO generate
-	// TODO genproclimit
-	// TODO hashespersec
-	// TODO pooledtx
-	// TODO testnet
-	// TODO N
+
+	/**
+	 * Gets mining-related information.
+	 * 
+	 * @return {@link GetMiningInfoResponse} - mining-related information.
+	 */
+	public GetMiningInfoResponse getMiningInfo() {
+		return jsonRpc("getmininginfo", Collections.EMPTY_LIST, GetMiningInfoResponse.class);
+	}
+
 
 	// TODO getnewaddress [account] Returns a new bitcoin address for receiving payments. If [account] is specified (recommended), it is added to the address book so payments received with the address will be credited to [account]. N
 	// TODO getpeerinfo version 0.7 Returns data about each connected node. N
