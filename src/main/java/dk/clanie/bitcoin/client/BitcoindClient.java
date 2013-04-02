@@ -20,6 +20,7 @@ package dk.clanie.bitcoin.client;
 import static dk.clanie.collections.CollectionFactory.newArrayList;
 import static dk.clanie.collections.CollectionFactory.newHashMap;
 import static dk.clanie.util.Util.firstNotNull;
+import static java.lang.Boolean.FALSE;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -37,6 +38,8 @@ import dk.clanie.bitcoin.TransactionOutputRef;
 import dk.clanie.bitcoin.client.request.BitcoindJsonRpcRequest;
 import dk.clanie.bitcoin.client.response.DecodeRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.GetInfoResponse;
+import dk.clanie.bitcoin.client.response.ListReceivedByAccountResponse;
+import dk.clanie.bitcoin.client.response.ListReceivedByAddressResponse;
 import dk.clanie.bitcoin.client.response.ListUnspentResponse;
 import dk.clanie.bitcoin.client.response.StringResponse;
 import dk.clanie.bitcoin.client.response.VoidResponse;
@@ -240,7 +243,7 @@ public class BitcoindClient {
 	 */
 	// TODO getaddednodeinfo <dns> [node] 
 	public StringResponse getAddedNodeInfo(Boolean dns, Object node) {
-		// TODO Use specific response-type(s). When calling with dns=false an oject is returned; when calling ith dns=true an array is returned.
+		// TODO Use specific response-type(s). When calling with dns=false an object is returned; when calling ith dns=true an array is returned.
 		List<Object> params = newArrayList();
 		params.add(dns);
 		return jsonRpc("getaddednodeinfo", params, StringResponse.class);
@@ -349,6 +352,7 @@ public class BitcoindClient {
 	 * @return {@link VoidResponse}
 	 */
 	public VoidResponse importPrivateKey(String key, String label, Boolean rescan) {
+		// TODO Test if this works with label == null and rescan != null
 		List<Object> params = newArrayList();
 		params.add(key);
 		if (label != null || rescan != null) params.add(label);
@@ -361,26 +365,46 @@ public class BitcoindClient {
 	// TODO listaccounts [minconf=1] Returns Object that has account names as keys, account balances as values. N
 	// TODO listaddressgroupings version 0.7 Returns all addresses in the wallet and info used for coincontrol. N
 
-	// TODO listreceivedbyaccount [minconf=1] [includeempty=false] Returns an array of objects containing:
-	// TODO "account" : the account of the receiving addresses
-	// TODO "amount" : total amount received by addresses with this account
-	// TODO "confirmations" : number of confirmations of the most recent transaction included
-	// TODO N
 
-	// TODO listreceivedbyaddress [minconf=1] [includeempty=false] Returns an array of objects containing:
-	// TODO "address" : receiving address
-	// TODO "account" : the account of the receiving address
-	// TODO "amount" : total amount received by the address
-	// TODO "confirmations" : number of confirmations of the most recent transaction included
-	// TODO To get a list of accounts on the system, execute bitcoind listreceivedbyaddress 0 true
-	// TODO N
+	/**
+	 * Gets amount received for each account.
+	 *
+	 * @param minConf - optional, default 1.
+	 * @param includeEmpty - optional, default false.
+	 * @return {@link ListReceivedByAccountResponse}
+	 */
+	// TODO Test listReceivedByAccount and add sample response for serialization test.
+	public ListReceivedByAccountResponse listReceivedByAccount(Integer minConf, Boolean includeEmpty) {
+		List<Object> params = newArrayList();
+		params.add(firstNotNull(minConf), Integer.valueOf(1));
+		params.add(firstNotNull(includeEmpty, FALSE));
+		return jsonRpc("listreceivedbyaccount", params, ListReceivedByAccountResponse.class);
+	}
+
+
+	/**
+	 * Gets amount received for each address.
+	 * <p>
+	 * To get a list of accounts on the system call with minConf = 0 and includeEmpty = true.
+	 *
+	 * @param minConf - optional, default 1.
+	 * @param includeEmpty - optional, default false.
+	 * @return {@link ListReceivedByAddressResponse}
+	 */
+	// TODO Test listReceivedByAddress and add sample response for serialization test.
+	public ListReceivedByAddressResponse listReceivedByAddress(Integer minConf, Boolean includeEmpty) {
+		List<Object> params = newArrayList();
+		params.add(firstNotNull(minConf), Integer.valueOf(1));
+		params.add(firstNotNull(includeEmpty, FALSE));
+		return jsonRpc("listreceivedbyaddress", params, ListReceivedByAddressResponse.class);
+	}
 
 	// TODO listsinceblock [blockhash] [target-confirmations] Get all transactions in blocks since block [blockhash], or all transactions if omitted. N
 	// TODO listtransactions [account] [count=10] [from=0] Returns up to [count] most recent transactions skipping the first [from] transactions for account [account]. If [account] not provided will return recent transaction from all accounts. N
 
 
 	/**
-	 * Lists unspent transaction outputs with between minconf and maxconf
+	 * Lists unspent transaction outputs with between minConf and maxConf
 	 * (inclusive) confirmations. Optionally filtered to only include transaction
 	 * outputs paid to specified addresses.<br>
 	 * 
