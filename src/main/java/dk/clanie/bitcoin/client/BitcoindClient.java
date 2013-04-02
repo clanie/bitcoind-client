@@ -352,10 +352,9 @@ public class BitcoindClient {
 	 * @return {@link VoidResponse}
 	 */
 	public VoidResponse importPrivateKey(String key, String label, Boolean rescan) {
-		// TODO Test if this works with label == null and rescan != null
 		List<Object> params = newArrayList();
 		params.add(key);
-		if (label != null || rescan != null) params.add(label);
+		if (label != null || rescan != null) params.add(firstNotNull(label, ""));
 		if (rescan != null) params.add(rescan);
 		return jsonRpc("importprivkey", params, VoidResponse.class);
 	}
@@ -373,7 +372,6 @@ public class BitcoindClient {
 	 * @param includeEmpty - optional, default false.
 	 * @return {@link ListReceivedByAccountResponse}
 	 */
-	// TODO Test listReceivedByAccount and add sample response for serialization test.
 	public ListReceivedByAccountResponse listReceivedByAccount(Integer minConf, Boolean includeEmpty) {
 		List<Object> params = newArrayList();
 		params.add(firstNotNull(minConf), Integer.valueOf(1));
@@ -391,7 +389,6 @@ public class BitcoindClient {
 	 * @param includeEmpty - optional, default false.
 	 * @return {@link ListReceivedByAddressResponse}
 	 */
-	// TODO Test listReceivedByAddress and add sample response for serialization test.
 	public ListReceivedByAddressResponse listReceivedByAddress(Integer minConf, Boolean includeEmpty) {
 		List<Object> params = newArrayList();
 		params.add(firstNotNull(minConf), Integer.valueOf(1));

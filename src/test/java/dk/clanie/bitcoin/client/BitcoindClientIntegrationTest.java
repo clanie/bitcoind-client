@@ -34,6 +34,8 @@ import dk.clanie.bitcoin.AddressAndAmount;
 import dk.clanie.bitcoin.TransactionOutputRef;
 import dk.clanie.bitcoin.client.response.DecodeRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.GetInfoResponse;
+import dk.clanie.bitcoin.client.response.ListReceivedByAccountResponse;
+import dk.clanie.bitcoin.client.response.ListReceivedByAddressResponse;
 import dk.clanie.bitcoin.client.response.ListUnspentResponse;
 import dk.clanie.bitcoin.client.response.StringResponse;
 import dk.clanie.bitcoin.client.response.VoidResponse;
@@ -150,8 +152,22 @@ public class BitcoindClientIntegrationTest {
 
 	@Test
 	public void testImportPrivateKey() throws Exception {
-		VoidResponse importPrivateKeyResponse = bc.importPrivateKey("cR67CTdULedW9Yqu8G9aKxQbuDq5DnJjY1ppT4fTTavfTWtE3dzz", "Test", null);
+		VoidResponse importPrivateKeyResponse = bc.importPrivateKey("cV48j141Jf5nAdEftRxRbGGXGpzDixw94aDjJBYniidUAPbAQZfB", null, true);
 		print(importPrivateKeyResponse);
+	}
+
+
+	@Test
+	public void testListReceivedByAccount() throws Exception {
+		ListReceivedByAccountResponse listReceivedByAccountResponse = bc.listReceivedByAccount(0, true);
+		print(listReceivedByAccountResponse);
+	}
+
+
+	@Test
+	public void testListReceivedByAddress() throws Exception {
+		ListReceivedByAddressResponse listReceivedByAddressResponse = bc.listReceivedByAddress(0, true);
+		print(listReceivedByAddressResponse);
 	}
 
 
