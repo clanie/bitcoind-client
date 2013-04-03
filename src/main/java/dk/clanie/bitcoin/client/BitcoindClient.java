@@ -21,9 +21,9 @@ import static dk.clanie.collections.CollectionFactory.newArrayList;
 import static dk.clanie.collections.CollectionFactory.newHashMap;
 import static dk.clanie.util.Util.firstNotNull;
 import static java.lang.Boolean.FALSE;
+import static java.util.Collections.EMPTY_LIST;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -34,8 +34,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import dk.clanie.bitcoin.AddressAndAmount;
+import dk.clanie.bitcoin.SignatureHashAlgorithm;
 import dk.clanie.bitcoin.TransactionOutputRef;
 import dk.clanie.bitcoin.client.request.BitcoindJsonRpcRequest;
+import dk.clanie.bitcoin.client.response.BooleanResponse;
 import dk.clanie.bitcoin.client.response.DecodeRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.GetInfoResponse;
 import dk.clanie.bitcoin.client.response.GetMiningInfoResponse;
@@ -43,7 +45,9 @@ import dk.clanie.bitcoin.client.response.GetTransactionResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAccountResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAddressResponse;
 import dk.clanie.bitcoin.client.response.ListUnspentResponse;
+import dk.clanie.bitcoin.client.response.SignRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.StringResponse;
+import dk.clanie.bitcoin.client.response.ValidateAddressResponse;
 import dk.clanie.bitcoin.client.response.VoidResponse;
 
 /**
@@ -269,7 +273,7 @@ public class BitcoindClient {
 	 * @return {@link GetInfoResponse}
 	 */
 	public GetInfoResponse getInfo() {
-		return jsonRpc("getinfo", Collections.EMPTY_LIST, GetInfoResponse.class);
+		return jsonRpc("getinfo", EMPTY_LIST, GetInfoResponse.class);
 	}
 
 	// TODO getmemorypool [data] If [data] is not specified, returns data needed to construct a block to work on:
@@ -289,7 +293,7 @@ public class BitcoindClient {
 	 * @return {@link GetMiningInfoResponse} - mining-related information.
 	 */
 	public GetMiningInfoResponse getMiningInfo() {
-		return jsonRpc("getmininginfo", Collections.EMPTY_LIST, GetMiningInfoResponse.class);
+		return jsonRpc("getmininginfo", EMPTY_LIST, GetMiningInfoResponse.class);
 	}
 
 
@@ -436,10 +440,77 @@ public class BitcoindClient {
 	// TODO setgenerate <generate> [genproclimit] <generate> is true or false to turn generation on or off.
 	// TODO Generation is limited to [genproclimit] processors, -1 is unlimited. N
 	// TODO signmessage <bitcoinaddress> <message> Sign a message with the private key of an address. Y
+	
+	/**
+	 * Signs inputs for raw transaction (serialized, hex-encoded).
+	 * <p>
+	 * 
+	 * nReturns json object with keys:  hex : raw transaction with signature(s) (hex-encoded string)
+	 * complete : 1 if transaction has a complete set of signature (0 if not)
+	 * <p>
+	 * Requires unlocked wallet.
+	 * 
+	 * {"result":"signrawtransaction <hex string> [{\"txid\":txid,\"vout\":n,\"scriptPubKey\":hex,\"redeemScript\":hex},...]
+	 * [<privatekey1>,...] [sighashtype=\"ALL\"]\n
+	 * 
+	 * @param hex - raw unsigned transaction.
+	 * @param requiredTxOuts - optional (may be null). An array of previous transaction outputs that
+	 * this transaction depends on but may not yet be in the block chain
+	 * @param privKeys - optional (may be null). An array of base58-encoded private keys that,
+	 * if given, will be the only keys used to sign the transaction.
+	 * @param sigHash - optional (may be null).
+	 * @return
+	 * 
+	 * @since bitcoind 0.7
+	 */
 	// TODO signrawtransaction <hexstring> [{"txid":txid,"vout":n,"scriptPubKey":hex},...] [<privatekey1>,...] version 0.7 Adds signatures to a raw transaction and returns the resulting raw transaction. Y/N
-	// TODO settxfee <amount> <amount> is a real and is rounded to the nearest 0.00000001 N
-	// TODO stop Stop bitcoin server. N
-	// TODO validateaddress <bitcoinaddress> Return information about <bitcoinaddress>. N
+	// TODO Test using args 2..4
+	public SignRawTransactionResponse signRawTransaction(String hex, Object[] requiredTxOuts, String[] privKeys, SignatureHashAlgorithm sigHash) {
+		List<Object> params = newArrayList();
+		params.add(hex);
+		params.add(requiredTxOuts);
+		params.add(privKeys);
+		params.add(sigHash);
+		return jsonRpc("signrawtransaction", params, SignRawTransactionResponse.class);
+	}
+
+
+	/**
+	 * Sets transaction fee.
+	 *
+	 * @param amount - transaction fee.
+	 * @return {@link BooleanResponse}
+	 */
+	public BooleanResponse setTxFee(BigDecimal amount) {
+		List<Object> params = newArrayList();
+		params.add(amount);
+		return jsonRpc("settxfee", params, BooleanResponse.class);
+	}
+
+
+	/**
+	 * Stop bitcoin server.
+	 *
+	 * @return
+	 */
+	public VoidResponse stop() {
+		return jsonRpc("stop", EMPTY_LIST, VoidResponse.class);
+	}
+
+
+	/**
+	 * Returns information about the given bitcoin address.
+	 *
+	 * @param address
+	 * @return {@link ValidateAddressResponse}
+	 */
+	public ValidateAddressResponse validateAddress(String address) {
+		List<Object> params = newArrayList();
+		params.add(address);
+		return jsonRpc("validateaddress", params, ValidateAddressResponse.class);
+	}
+
+
 	// TODO verifymessage <bitcoinaddress> <signature> <message> Verify a signed message. N
 
 
@@ -453,7 +524,7 @@ public class BitcoindClient {
 	 * @return {@link VoidResponse}
 	 */
 	public VoidResponse walletLock() {
-		return jsonRpc("walletlock", Collections.EMPTY_LIST, VoidResponse.class);
+		return jsonRpc("walletlock", EMPTY_LIST, VoidResponse.class);
 	}
 
 

@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dk.clanie.bitcoin.AddressAndAmount;
 import dk.clanie.bitcoin.TransactionOutputRef;
+import dk.clanie.bitcoin.client.response.BooleanResponse;
 import dk.clanie.bitcoin.client.response.DecodeRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.GetInfoResponse;
 import dk.clanie.bitcoin.client.response.GetMiningInfoResponse;
@@ -39,7 +40,9 @@ import dk.clanie.bitcoin.client.response.GetTransactionResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAccountResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAddressResponse;
 import dk.clanie.bitcoin.client.response.ListUnspentResponse;
+import dk.clanie.bitcoin.client.response.SignRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.StringResponse;
+import dk.clanie.bitcoin.client.response.ValidateAddressResponse;
 import dk.clanie.bitcoin.client.response.VoidResponse;
 
 
@@ -72,15 +75,27 @@ public class BitcoindClientIntegrationTest {
 
 
 	@Test
-	public void testCreateRawTransaction_and_decodeRawTransaction() throws Exception {
+	public void testCreateRawTransaction() throws Exception {
 		AddressAndAmount aaa = new AddressAndAmount("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq", BigDecimal.valueOf(100000000L, 8));
 		List<TransactionOutputRef> txOuts = newArrayList();
 		txOuts.add(new TransactionOutputRef("280acc1c3611fee83331465c715b0da2d10b65733a688ee2273fdcc7581f149b", 0));
 		StringResponse createRawTransactionResponse = bc.createRawTransaction(txOuts, aaa, aaa);
+		print(createRawTransactionResponse);
+		
+	}
 
-		DecodeRawTransactionResponse decodeRawTransactionResponse = bc.decodeRawTransaction(createRawTransactionResponse.getResult());
+
+	@Test
+	public void testDecodeRawTransaction() throws Exception {
+		DecodeRawTransactionResponse decodeRawTransactionResponse = bc.decodeRawTransaction("01000000019b141f58c7dc3f27e28e683a73650bd1a20d5b715c463133e8fe11361ccc0a280000000000ffffffff0100c2eb0b000000001976a91426ab1c83e2a8269b7007baf0244151cca4c5e3fd88ac00000000");
 		print(decodeRawTransactionResponse);
-		System.out.println(decodeRawTransactionResponse);
+	}
+
+
+	@Test
+	public void testDecodeRawTransaction_signedTransaction() throws Exception {
+		DecodeRawTransactionResponse decodeRawTransactionResponse = bc.decodeRawTransaction("01000000019b141f58c7dc3f27e28e683a73650bd1a20d5b715c463133e8fe11361ccc0a28000000006a473044022011a55030de6225d16b0f0c8854a324cbbbf0f9ef92d1b0b18696b403d7c3ccbc0220331ad3f476ee016849185138e68ba33d29a684f0ec014cd7f05e3d406412b4c4012103b72d2e7dcf317a8d26e64172e80ac88754e31dad59ec25c2fbfdb082f0288aa6ffffffff0100c2eb0b000000001976a91426ab1c83e2a8269b7007baf0244151cca4c5e3fd88ac00000000");
+		print(decodeRawTransactionResponse);
 	}
 
 
@@ -161,7 +176,7 @@ public class BitcoindClientIntegrationTest {
 
 	@Test
 	public void testHelp() throws Exception {
-		StringResponse helpResponse = bc.help("getaccountaddress");
+		StringResponse helpResponse = bc.help("signrawtransaction");
 		print(helpResponse);
 	}
 
@@ -198,6 +213,41 @@ public class BitcoindClientIntegrationTest {
 	public void testWalletPassPhrase() throws Exception {
 		VoidResponse walletPassPhraseResponse = bc.walletPassPhrase("popidop", 99999999);
 		print(walletPassPhraseResponse);
+	}
+
+
+	@Test
+	public void testSignRawTransaction() throws Exception {
+		SignRawTransactionResponse signRawTransaction = bc.signRawTransaction("01000000019b141f58c7dc3f27e28e683a73650bd1a20d5b715c463133e8fe11361ccc0a280000000000ffffffff0100c2eb0b000000001976a91426ab1c83e2a8269b7007baf0244151cca4c5e3fd88ac00000000", null, null, null);
+		print(signRawTransaction);
+	}
+
+
+	@Test
+	public void testSetTxFee() throws Exception {
+		BooleanResponse setTxFeeResponse = bc.setTxFee(BigDecimal.valueOf(0.00001d));
+		print(setTxFeeResponse);
+	}
+
+
+	@Test
+	public void testStop() throws Exception {
+		VoidResponse stopResponse = bc.stop();
+		print(stopResponse);
+	}
+
+
+	@Test
+	public void testValidateAddress() throws Exception {
+		ValidateAddressResponse validateAddressResponse = bc.validateAddress("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq");
+		print(validateAddressResponse);
+	}
+
+
+	@Test
+	public void testValidateAddress_invalid() throws Exception {
+		ValidateAddressResponse validateAddressResponse = bc.validateAddress("2j3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq");
+		print(validateAddressResponse);
 	}
 
 

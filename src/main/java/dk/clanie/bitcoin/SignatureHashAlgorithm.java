@@ -15,43 +15,36 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package dk.clanie.bitcoin.client.response;
-
-import org.springframework.roo.addon.javabean.RooJavaBean;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
-import dk.clanie.bitcoin.TransactionInput;
-import dk.clanie.bitcoin.TransactionOutput;
-import dk.clanie.bitcoin.json.JsonExtra;
+package dk.clanie.bitcoin;
 
 /**
- * Decoded raw transaction.
+ * Identifies an signature hash algorithm.
+ * 
+ * @see http://https://en.bitcoin.it/wiki/Raw_Transactions and 
  * 
  * @author Claus Nielsen
  */
-@SuppressWarnings("serial")
-@RooJavaBean(settersByDefault = false)
-@JsonPropertyOrder({
-	"txid",
-	"version",
-	"locktime",
-	"vin",
-	"vout"	
-})
-public class DecodeRawTransactionResult extends JsonExtra {
+public enum SignatureHashAlgorithm {
 
-	@JsonProperty("txid")
-	private String txId;
+	ALL,
+	NONE,
+	SINGLE,
+	ALL_ANYONECANPAY("ALL|ANYONECANPAY"),
+	NONE_ANYONECANPAY("NONE|ANYONECANPAY"),
+	SINGLE_ANYONECANPAY("SINGLE|ANYONECANPAY");
 
-	private Integer version;
-	private Integer locktime;
+	private String value;
 
-	@JsonProperty("vin")
-	private TransactionInput[] txInputs;
+	private SignatureHashAlgorithm() {
+		value = name();
+	}
+
+	private SignatureHashAlgorithm(String value) {
+		this.value = value;
+	}
 	
-	@JsonProperty("vout")
-	private TransactionOutput[] txOutputs;
+	public String toString() {
+		return value;
+	};
 
 }

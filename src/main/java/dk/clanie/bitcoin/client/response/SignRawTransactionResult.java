@@ -19,39 +19,24 @@ package dk.clanie.bitcoin.client.response;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-import dk.clanie.bitcoin.TransactionInput;
-import dk.clanie.bitcoin.TransactionOutput;
 import dk.clanie.bitcoin.json.JsonExtra;
 
 /**
- * Decoded raw transaction.
+ * Data returned by signRawTransaction.
  * 
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
 @JsonPropertyOrder({
-	"txid",
-	"version",
-	"locktime",
-	"vin",
-	"vout"	
+	"hex", 
+	"complete" 
 })
-public class DecodeRawTransactionResult extends JsonExtra {
+public class SignRawTransactionResult extends JsonExtra {
 
-	@JsonProperty("txid")
-	private String txId;
-
-	private Integer version;
-	private Integer locktime;
-
-	@JsonProperty("vin")
-	private TransactionInput[] txInputs;
-	
-	@JsonProperty("vout")
-	private TransactionOutput[] txOutputs;
+	private String hex;
+	private Boolean complete;
 
 }

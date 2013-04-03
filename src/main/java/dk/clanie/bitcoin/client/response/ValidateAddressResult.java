@@ -19,39 +19,54 @@ package dk.clanie.bitcoin.client.response;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-import dk.clanie.bitcoin.TransactionInput;
-import dk.clanie.bitcoin.TransactionOutput;
 import dk.clanie.bitcoin.json.JsonExtra;
 
 /**
- * Decoded raw transaction.
+ * Data returned by validateAddress.
  * 
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
 @JsonPropertyOrder({
-	"txid",
-	"version",
-	"locktime",
-	"vin",
-	"vout"	
+	"isvalid",
+	"address",
+	"ismine",
+	"isscript",
+	"pubkey",
+	"iscompressed",
+	"account"
 })
-public class DecodeRawTransactionResult extends JsonExtra {
+public class ValidateAddressResult extends JsonExtra {
 
-	@JsonProperty("txid")
-	private String txId;
+	@JsonProperty("isvalid")
+	private Boolean valid;
 
-	private Integer version;
-	private Integer locktime;
+	@JsonInclude(Include.NON_NULL)
+	private String address;
 
-	@JsonProperty("vin")
-	private TransactionInput[] txInputs;
-	
-	@JsonProperty("vout")
-	private TransactionOutput[] txOutputs;
+	@JsonProperty("ismine")
+	@JsonInclude(Include.NON_NULL)
+	private Boolean mine;
+
+	@JsonProperty("isscript")
+	@JsonInclude(Include.NON_NULL)
+	private Boolean script;
+
+	@JsonProperty("pubkey")
+	@JsonInclude(Include.NON_NULL)
+	private String pubKey;
+
+	@JsonProperty("iscompressed")
+	@JsonInclude(Include.NON_NULL)
+	private Boolean compressed;
+
+	@JsonInclude(Include.NON_NULL)
+	private String account;
 
 }
