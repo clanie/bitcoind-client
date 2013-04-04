@@ -176,7 +176,7 @@ public class BitcoindClientIntegrationTest {
 
 	@Test
 	public void testHelp() throws Exception {
-		StringResponse helpResponse = bc.help("signrawtransaction");
+		StringResponse helpResponse = bc.help("signmessage");
 		print(helpResponse);
 	}
 
@@ -213,6 +213,27 @@ public class BitcoindClientIntegrationTest {
 	public void testWalletPassPhrase() throws Exception {
 		VoidResponse walletPassPhraseResponse = bc.walletPassPhrase("popidop", 99999999);
 		print(walletPassPhraseResponse);
+	}
+
+
+	@Test
+	public void testSetAccount() throws Exception {
+		VoidResponse setAccount = bc.setAccount("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq", "clanie");
+		print(setAccount);
+	}
+
+
+	@Test
+	public void testSetGenerate() throws Exception {
+		VoidResponse setGenerate = bc.setGenerate(false, null);
+		print(setGenerate);
+	}
+
+
+	@Test
+	public void testSignMessage() throws Exception {
+		StringResponse signMessage = bc.signMessage("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq", "We love Bitcoin");
+		print(signMessage);
 	}
 
 

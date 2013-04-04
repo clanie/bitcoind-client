@@ -81,6 +81,9 @@ public class BitcoindJsonRpcErrorHandler extends DefaultResponseErrorHandler {
 			case -5:
 				// Invalid Bitcoin address
 				throw new InvalidAddressException(errorResponse);
+			case -13:
+				// Error: Please enter the wallet passphrase with walletpassphrase first.
+				throw new BitcoinServerException(errorResponse);
 			case -14:
 				// Error: The wallet passphrase entered was incorrect.
 				throw new BitcoinServerException(errorResponse);

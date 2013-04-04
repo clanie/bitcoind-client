@@ -436,11 +436,64 @@ public class BitcoindClient {
 	// TODO sendmany <fromaccount> {address:amount,...} [minconf=1] [comment] amounts are double-precision floating point numbers Y
 	// TODO sendrawtransaction <hexstring> version 0.7 Submits raw transaction (serialized, hex-encoded) to local node and network. N
 	// TODO sendtoaddress <bitcoinaddress> <amount> [comment] [comment-to] <amount> is a real and is rounded to 8 decimal places. Returns the transaction ID <txid> if successful. Y
-	// TODO setaccount <bitcoinaddress> <account> Sets the account associated with the given address. Assigning address that is already assigned to the same account will create a new address associated with that account. N
-	// TODO setgenerate <generate> [genproclimit] <generate> is true or false to turn generation on or off.
-	// TODO Generation is limited to [genproclimit] processors, -1 is unlimited. N
-	// TODO signmessage <bitcoinaddress> <message> Sign a message with the private key of an address. Y
-	
+
+
+	/**
+	 * Sets the account associated with the given address. Assigning an address
+	 * that is already assigned to the same account will create a new address
+	 * associated with that account.
+	 * 
+	 * @param address
+	 *            - bitcoin address
+	 * @param account
+	 *            - the account to set
+	 * @return {@link VirtualMachineError}
+	 */
+	public VoidResponse setAccount(String address, String account) {
+		List<Object> params = newArrayList();
+		params.add(address);
+		params.add(account);
+		return jsonRpc("setaccount", params, VoidResponse.class);
+	}
+
+
+	/**
+	 * Turnes generation on or off.
+	 * 
+	 * @param generate - torn generation on (true) or off (false).
+	 * @param genProcLimit
+	 *            - optional (may be null). Generation is limited to
+	 *            <code>genProcLimit</code> processors, -1 is unlimited.
+	 * @return {@link VoidResponse}
+	 */
+	public VoidResponse setGenerate(Boolean generate, Integer genProcLimit) {
+		List<Object> params = newArrayList();
+		params.add(generate);
+		if (genProcLimit != null) params.add(genProcLimit);
+		return jsonRpc("setgenerate", params, VoidResponse.class);
+	}
+
+
+	/**
+	 * Sign a message with the private key of an address.
+	 * <p>
+	 * Requires unlocked wallet.
+	 * 
+	 * @param address
+	 *            - bitcoin address.
+	 * @param message
+	 *            - the message to sign.
+	 * @return {@link StringResponse} with the signed message in the result
+	 *         field.
+	 */
+	public StringResponse signMessage(String address, String message) {
+		List<Object> params = newArrayList();
+		params.add(address);
+		params.add(message);
+		return jsonRpc("signmessage", params, StringResponse.class);
+	}
+
+
 	/**
 	 * Signs inputs for raw transaction (serialized, hex-encoded).
 	 * <p>
@@ -463,14 +516,15 @@ public class BitcoindClient {
 	 * 
 	 * @since bitcoind 0.7
 	 */
-	// TODO signrawtransaction <hexstring> [{"txid":txid,"vout":n,"scriptPubKey":hex},...] [<privatekey1>,...] version 0.7 Adds signatures to a raw transaction and returns the resulting raw transaction. Y/N
+	// TODO signrawtransaction <hexstring> [{"txid":txid,"vout":n,"scriptPubKey":hex},...] [<privatekey1>,...] Adds signatures to a raw transaction and returns the resulting raw transaction. Y/N
+	// TODO Define type for requiredTxOuts
 	// TODO Test using args 2..4
 	public SignRawTransactionResponse signRawTransaction(String hex, Object[] requiredTxOuts, String[] privKeys, SignatureHashAlgorithm sigHash) {
 		List<Object> params = newArrayList();
 		params.add(hex);
 		params.add(requiredTxOuts);
 		params.add(privKeys);
-		params.add(sigHash);
+		params.add(sigHash.toString());
 		return jsonRpc("signrawtransaction", params, SignRawTransactionResponse.class);
 	}
 
