@@ -35,6 +35,7 @@ import dk.clanie.bitcoin.TransactionOutputRef;
 import dk.clanie.bitcoin.client.request.AddNodeAction;
 import dk.clanie.bitcoin.client.response.BooleanResponse;
 import dk.clanie.bitcoin.client.response.DecodeRawTransactionResponse;
+import dk.clanie.bitcoin.client.response.GetAddedNodeInfoResponse;
 import dk.clanie.bitcoin.client.response.GetInfoResponse;
 import dk.clanie.bitcoin.client.response.GetMiningInfoResponse;
 import dk.clanie.bitcoin.client.response.GetTransactionResponse;
@@ -111,7 +112,12 @@ public class BitcoindClientIntegrationTest {
 
 	@Test
 	public void testAddNode() throws Exception {
-		VoidResponse addNode = bc.addNode("faucet.bitcoin.st", AddNodeAction.ONE_TRY);
+		VoidResponse // addNode = bc.addNode("faucet.bitcoin.st", AddNodeAction.ADD);
+		addNode = bc.addNode("faucet.bitcoin.stXX", AddNodeAction.ADD);
+		addNode = bc.addNode("faucet.bitcoin.stYY", AddNodeAction.ADD);
+		addNode = bc.addNode("faucet.bitcoin.stZZ", AddNodeAction.ADD);
+		addNode = bc.addNode("faucet.bitcoin.stZZ", AddNodeAction.REMOVE);
+		addNode = bc.addNode("faucet.bitcoin.stYY", AddNodeAction.ONE_TRY);
 		print(addNode);
 	}
 
@@ -150,7 +156,7 @@ public class BitcoindClientIntegrationTest {
 	public void testGetAddedNodeInfo() throws Exception {
 		// TODO
 		// When calling with dns=false an oject is returned; when calling ith dns=true an array is returned.
-		StringResponse addedNodeInfoResponse = bc.getAddedNodeInfo(false, null);
+		GetAddedNodeInfoResponse addedNodeInfoResponse = bc.getAddedNodeInfo(true, "faucet.bitcoin.st");
 		print(addedNodeInfoResponse);
 	}
 

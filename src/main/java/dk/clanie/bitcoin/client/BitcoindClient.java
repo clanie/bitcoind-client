@@ -39,6 +39,7 @@ import dk.clanie.bitcoin.client.request.AddNodeAction;
 import dk.clanie.bitcoin.client.request.BitcoindJsonRpcRequest;
 import dk.clanie.bitcoin.client.response.BooleanResponse;
 import dk.clanie.bitcoin.client.response.DecodeRawTransactionResponse;
+import dk.clanie.bitcoin.client.response.GetAddedNodeInfoResponse;
 import dk.clanie.bitcoin.client.response.GetInfoResponse;
 import dk.clanie.bitcoin.client.response.GetMiningInfoResponse;
 import dk.clanie.bitcoin.client.response.GetTransactionResponse;
@@ -118,6 +119,10 @@ public class BitcoindClient {
 	 * @param action
 	 *            - what to do
 	 * @return {@link VoidResponse}
+	 * 
+	 * @see #getAddedNodeInfo(Boolean, String)
+	 * 
+	 * @since bitcoind 0.8
 	 */
 	public VoidResponse addNode(String node, AddNodeAction action) {
 		List<Object> params = newArrayList();
@@ -250,17 +255,19 @@ public class BitcoindClient {
 	 * 
 	 * @param dns
 	 * @param node
-	 *            - optional
+	 *            - optional (may be null).
 	 * @return
 	 * 
 	 * @since bitcoind 0.8
 	 */
-	// TODO getaddednodeinfo <dns> [node] 
-	public StringResponse getAddedNodeInfo(Boolean dns, Object node) {
-		// TODO Use specific response-type(s). When calling with dns=false an object is returned; when calling ith dns=true an array is returned.
+	public GetAddedNodeInfoResponse getAddedNodeInfo(Boolean dns, String node) {
+		// TODO When calling with dns=false an object is returned; when calling with dns=true an array is returned.
+		// TODO Currently only the array case (dns=true) is handled - see https://github.com/bitcoin/bitcoin/issues/2467
+		// TODO If bitcoind isn't changed (bug 2467) implement special serialization of the response in _GetAddedNodeInfoResponse_dnsArgFalse.json
 		List<Object> params = newArrayList();
 		params.add(dns);
-		return jsonRpc("getaddednodeinfo", params, StringResponse.class);
+		if (node != null) params.add(node);
+		return jsonRpc("getaddednodeinfo", params, GetAddedNodeInfoResponse.class);
 	}
 
 
@@ -490,7 +497,7 @@ public class BitcoindClient {
 	/**
 	 * Turnes generation on or off.
 	 * 
-	 * @param generate - torn generation on (true) or off (false).
+	 * @param generate - turn generation on (true) or off (false).
 	 * @param genProcLimit
 	 *            - optional (may be null). Generation is limited to
 	 *            <code>genProcLimit</code> processors, -1 is unlimited.
