@@ -26,6 +26,6 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public class GetMiningInfoResponse extends BitcoindJsonRpcResponse<GetMiningInfoResult, String> {
+public class GetMiningInfoResponse extends BitcoindJsonRpcResponse<GetMiningInfoResult> {
 
 }

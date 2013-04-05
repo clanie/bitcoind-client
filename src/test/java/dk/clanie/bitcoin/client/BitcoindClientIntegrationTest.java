@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dk.clanie.bitcoin.AddressAndAmount;
 import dk.clanie.bitcoin.TransactionOutputRef;
+import dk.clanie.bitcoin.client.request.AddNodeAction;
 import dk.clanie.bitcoin.client.response.BooleanResponse;
 import dk.clanie.bitcoin.client.response.DecodeRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.GetInfoResponse;
@@ -81,7 +82,7 @@ public class BitcoindClientIntegrationTest {
 		txOuts.add(new TransactionOutputRef("280acc1c3611fee83331465c715b0da2d10b65733a688ee2273fdcc7581f149b", 0));
 		StringResponse createRawTransactionResponse = bc.createRawTransaction(txOuts, aaa, aaa);
 		print(createRawTransactionResponse);
-		
+
 	}
 
 
@@ -109,15 +110,16 @@ public class BitcoindClientIntegrationTest {
 
 
 	@Test
-	public void testAddNode() {
-		// TODO
+	public void testAddNode() throws Exception {
+		VoidResponse addNode = bc.addNode("faucet.bitcoin.st", AddNodeAction.ONE_TRY);
+		print(addNode);
 	}
 
 
 	@Test
 	public void testDumpPrivateKey() throws Exception {
-//		StringResponse dumpPrivateKeyResponse = bc.dumpPrivateKey("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq");
-		StringResponse dumpPrivateKeyResponse = bc.dumpPrivateKey("mof5U4zusfjigWYwwjf6c88Qn77KEafStx");
+		StringResponse dumpPrivateKeyResponse = bc.dumpPrivateKey("mxphxiG4Ggjb3bKFbeFnsuK2qde3541S93");
+		//		StringResponse dumpPrivateKeyResponse = bc.dumpPrivateKey("mof5U4zusfjigWYwwjf6c88Qn77KEafStx");
 		print(dumpPrivateKeyResponse);
 	}
 
@@ -131,7 +133,7 @@ public class BitcoindClientIntegrationTest {
 
 	@Test
 	public void testGetAccount() throws Exception {
-//		StringResponse getAccountResponse = bc.getAccount("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq");
+		//		StringResponse getAccountResponse = bc.getAccount("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq");
 		StringResponse getAccountResponse = bc.getAccount("mof5U4zusfjigWYwwjf6c88Qn77KEafStx");
 		print(getAccountResponse);
 	}
@@ -169,14 +171,14 @@ public class BitcoindClientIntegrationTest {
 
 	@Test
 	public void testGetTransaction() throws Exception {
-		GetTransactionResponse transactionResponse = bc.getTransaction("280acc1c3611fee83331465c715b0da2d10b65733a688ee2273fdcc7581f149b");
+		GetTransactionResponse transactionResponse = bc.getTransaction("9e8485aed75a0e0c8b1bbcda5f3e1426a7da914cb5732f73dd8bd6128344a608");
 		print(transactionResponse);
 	}
 
 
 	@Test
 	public void testHelp() throws Exception {
-		StringResponse helpResponse = bc.help("signmessage");
+		StringResponse helpResponse = bc.help("verifymessage");
 		print(helpResponse);
 	}
 
@@ -213,6 +215,13 @@ public class BitcoindClientIntegrationTest {
 	public void testWalletPassPhrase() throws Exception {
 		VoidResponse walletPassPhraseResponse = bc.walletPassPhrase("popidop", 99999999);
 		print(walletPassPhraseResponse);
+	}
+
+
+	@Test
+	public void testSendToAddress() throws Exception {
+		StringResponse sendToAddress = bc.sendToAddress("mwswEtw6t2ziSjsfip62FPg84NXGsJ5H2o", BigDecimal.valueOf(0.01d), "Comment", "CommentTO");
+		print(sendToAddress);
 	}
 
 
@@ -269,6 +278,13 @@ public class BitcoindClientIntegrationTest {
 	public void testValidateAddress_invalid() throws Exception {
 		ValidateAddressResponse validateAddressResponse = bc.validateAddress("2j3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq");
 		print(validateAddressResponse);
+	}
+
+
+	@Test
+	public void testVerifyMessage() throws Exception {
+		BooleanResponse verifyMessage = bc.verifyMessage("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq", "IPmHnxzFa8bKD0Tt/0uT+3ak+8g+ToxEhivc49ciJgA3wuQWSMyc2OdTL/AooRXQ7qtCMkp4NXZ/dw0vBI6fPAs=", "We love Bitcoin");
+		print(verifyMessage);
 	}
 
 

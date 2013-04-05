@@ -25,6 +25,6 @@ package dk.clanie.bitcoin.client.response;
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
-public class BooleanResponse extends BitcoindJsonRpcResponse<Boolean, String> {
+public class BooleanResponse extends BitcoindJsonRpcResponse<Boolean> {
 
 }

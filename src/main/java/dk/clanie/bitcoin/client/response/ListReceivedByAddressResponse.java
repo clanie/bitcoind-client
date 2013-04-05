@@ -23,6 +23,6 @@ package dk.clanie.bitcoin.client.response;
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
-public class ListReceivedByAddressResponse extends BitcoindJsonRpcResponse<ListReceivedByAddressResult[], String> {
+public class ListReceivedByAddressResponse extends BitcoindJsonRpcResponse<ListReceivedByAddressResult[]> {
 
 }

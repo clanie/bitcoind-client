@@ -26,6 +26,6 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public class BitcoindErrorResponse extends BitcoindJsonRpcResponse<String, BitcoindError> {
+public class BitcoindErrorResponse extends BitcoindJsonRpcResponse<Object> {
 
 }

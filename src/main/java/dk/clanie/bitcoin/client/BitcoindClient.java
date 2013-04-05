@@ -27,7 +27,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Service;
@@ -36,6 +35,7 @@ import org.springframework.web.client.RestTemplate;
 import dk.clanie.bitcoin.AddressAndAmount;
 import dk.clanie.bitcoin.SignatureHashAlgorithm;
 import dk.clanie.bitcoin.TransactionOutputRef;
+import dk.clanie.bitcoin.client.request.AddNodeAction;
 import dk.clanie.bitcoin.client.request.BitcoindJsonRpcRequest;
 import dk.clanie.bitcoin.client.response.BooleanResponse;
 import dk.clanie.bitcoin.client.response.DecodeRawTransactionResponse;
@@ -57,6 +57,9 @@ import dk.clanie.bitcoin.client.response.VoidResponse;
  */
 @Service
 public class BitcoindClient {
+
+
+	public static final int SCALE = 8;
 
 
 	// [Configuration]
@@ -110,11 +113,17 @@ public class BitcoindClient {
 	 * Attempts add or remove <node> from the addnode list or try a connection
 	 * to &lt;node&gt; once.
 	 * 
-	 * @return
+	 * @param node
+	 *            - host name or IP addres
+	 * @param action
+	 *            - what to do
+	 * @return {@link VoidResponse}
 	 */
-	// TODO addnode <node> <add|remove|onetry>
-	public VoidResponse addNode() {
-		throw new NotImplementedException("addNode yet not implemented.");
+	public VoidResponse addNode(String node, AddNodeAction action) {
+		List<Object> params = newArrayList();
+		params.add(node);
+		params.add(action.toString());
+		return jsonRpc("addnode", params, VoidResponse.class);
 	}
 
 
@@ -189,7 +198,6 @@ public class BitcoindClient {
 	 * @return {@link StringResponse}
 	 */
 	public StringResponse dumpPrivateKey(String bitcoinAddress) {
-		// TODO Make dumpPrivateKey work!
 		List<String> params = newArrayList();
 		params.add(bitcoinAddress);
 		return jsonRpc("dumpprivkey", params, StringResponse.class);
@@ -435,7 +443,29 @@ public class BitcoindClient {
 	// TODO sendfrom <fromaccount> <tobitcoinaddress> <amount> [minconf=1] [comment] [comment-to] <amount> is a real and is rounded to 8 decimal places. Will send the given amount to the given address, ensuring the account has a valid balance using [minconf] confirmations. Returns the transaction ID if successful (not in JSON object). Y
 	// TODO sendmany <fromaccount> {address:amount,...} [minconf=1] [comment] amounts are double-precision floating point numbers Y
 	// TODO sendrawtransaction <hexstring> version 0.7 Submits raw transaction (serialized, hex-encoded) to local node and network. N
-	// TODO sendtoaddress <bitcoinaddress> <amount> [comment] [comment-to] <amount> is a real and is rounded to 8 decimal places. Returns the transaction ID <txid> if successful. Y
+
+
+	/**
+	 * Sends bitcoins to the given address.
+	 * 
+	 * @param address
+	 *            - bitcoin address
+	 * @param amount
+	 *            - bitcoins
+	 * @param comment
+	 *            - text for the transactions comment field
+	 * @param commentTo
+	 *            - text for the transactions to: field
+	 * @return String with transaction number
+	 */
+	public StringResponse sendToAddress(String address, BigDecimal amount, String comment, String commentTo) {
+		List<Object> params = newArrayList();
+		params.add(address);
+		params.add(amount.setScale(SCALE));
+		if (comment != null || commentTo != null) params.add(comment);
+		if (commentTo != null) params.add(commentTo);
+		return jsonRpc("sendtoaddress", params, StringResponse.class);
+	}
 
 
 	/**
@@ -537,7 +567,7 @@ public class BitcoindClient {
 	 */
 	public BooleanResponse setTxFee(BigDecimal amount) {
 		List<Object> params = newArrayList();
-		params.add(amount);
+		params.add(amount.setScale(SCALE));
 		return jsonRpc("settxfee", params, BooleanResponse.class);
 	}
 
@@ -565,7 +595,21 @@ public class BitcoindClient {
 	}
 
 
-	// TODO verifymessage <bitcoinaddress> <signature> <message> Verify a signed message. N
+	/**
+	 * Verifies a signed message.
+	 * 
+	 * @param address
+	 * @param signature
+	 * @param message
+	 * @return {@link BooleanResponse}
+	 */
+	public BooleanResponse verifyMessage(String address, String signature, String message) {
+		List<Object> params = newArrayList();
+		params.add(address);
+		params.add(signature);
+		params.add(message);
+		return jsonRpc("verifymessage", params, BooleanResponse.class);
+	}
 
 
 	/**

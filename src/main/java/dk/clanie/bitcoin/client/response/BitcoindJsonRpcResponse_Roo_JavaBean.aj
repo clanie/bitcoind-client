@@ -3,6 +3,7 @@
 
 package dk.clanie.bitcoin.client.response;
 
+import dk.clanie.bitcoin.client.response.BitcoindError;
 import dk.clanie.bitcoin.client.response.BitcoindJsonRpcResponse;
 
 privileged aspect BitcoindJsonRpcResponse_Roo_JavaBean {
@@ -11,7 +12,7 @@ privileged aspect BitcoindJsonRpcResponse_Roo_JavaBean {
         return this.result;
     }
     
-    public ET BitcoindJsonRpcResponse.getError() {
+    public BitcoindError BitcoindJsonRpcResponse.getError() {
         return this.error;
     }
     

@@ -29,6 +29,6 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public class ListUnspentResponse extends BitcoindJsonRpcResponse<ListUnspentResult[], String> {
+public class ListUnspentResponse extends BitcoindJsonRpcResponse<ListUnspentResult[]> {
 
 }

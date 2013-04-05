@@ -26,6 +26,6 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public class DecodeRawTransactionResponse extends BitcoindJsonRpcResponse<DecodeRawTransactionResult, String> {
+public class DecodeRawTransactionResponse extends BitcoindJsonRpcResponse<DecodeRawTransactionResult> {
 
 }

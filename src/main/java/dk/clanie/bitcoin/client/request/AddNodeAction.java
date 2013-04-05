@@ -15,30 +15,39 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package dk.clanie.bitcoin;
-
-import java.math.BigDecimal;
-
-import org.springframework.roo.addon.javabean.RooJavaBean;
-
-import dk.clanie.bitcoin.client.BitcoindClient;
-import dk.clanie.core.BaseClass;
+package dk.clanie.bitcoin.client.request;
 
 /**
- * Data object holding a bitcoin address (an addressee) and an amount.
+ * Action code telling the BitcoindClient addNode method what to do.
  * 
  * @author Claus Nielsen
  */
-@SuppressWarnings("serial")
-@RooJavaBean(settersByDefault = false)
-public class AddressAndAmount extends BaseClass {
+public enum AddNodeAction {
 
-	private String address;
-	private BigDecimal amount;
+	/**
+	 * Add the given node.
+	 */
+	ADD("add"),
 
-	public AddressAndAmount(String address, BigDecimal amount) {
-		this.address = address;
-		this.amount = amount.setScale(BitcoindClient.SCALE);
+	/**
+	 * Remove the given node.
+	 */
+	REMOVE("remove"),
+
+	/**
+	 * Try connecting to the given node once.
+	 */
+	ONE_TRY("onetry");
+
+	private String value;
+
+	private AddNodeAction(String value) {
+		this.value = value;
+	}
+
+	@Override
+	public String toString() {
+		return value;
 	}
 
 }

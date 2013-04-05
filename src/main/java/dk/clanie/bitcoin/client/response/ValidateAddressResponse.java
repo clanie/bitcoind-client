@@ -26,6 +26,6 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public class ValidateAddressResponse extends BitcoindJsonRpcResponse<ValidateAddressResult, String> {
+public class ValidateAddressResponse extends BitcoindJsonRpcResponse<ValidateAddressResult> {
 
 }

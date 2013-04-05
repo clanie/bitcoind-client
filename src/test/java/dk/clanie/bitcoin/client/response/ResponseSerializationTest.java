@@ -113,11 +113,11 @@ public class ResponseSerializationTest {
 		String className = extractResponseClassName(file);
 		String jsonSample = IOUtils.toString(file.toURI());
 		@SuppressWarnings("unchecked")
-		Class<? extends BitcoindJsonRpcResponse<?, ?>> responseType = (Class<? extends BitcoindJsonRpcResponse<?, ?>>) Class.forName("dk.clanie.bitcoin.client.response." + className);
+		Class<? extends BitcoindJsonRpcResponse<?>> responseType = (Class<? extends BitcoindJsonRpcResponse<?>>) Class.forName("dk.clanie.bitcoin.client.response." + className);
 
 		// Deserialize and re-serialize
 		log.debug("Deserializing " + jsonSample);
-		BitcoindJsonRpcResponse<?, ?> response = objectMapper.readValue(jsonSample, responseType);
+		BitcoindJsonRpcResponse<?> response = objectMapper.readValue(jsonSample, responseType);
 		String roundtrippedJson = objectMapper.writeValueAsString(response);
 		assertThat("json -> obj -> json roundtrip serialization failed for " + file.getName() + ".", roundtrippedJson, equalTo(jsonSample));
 
