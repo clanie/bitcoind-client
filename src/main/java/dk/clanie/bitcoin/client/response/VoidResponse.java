@@ -17,8 +17,6 @@
  */
 package dk.clanie.bitcoin.client.response;
 
-
-
 /**
  * Response type used for methods not expected to return a result.
  * 

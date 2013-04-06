@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import dk.clanie.bitcoin.json.JsonExtra;
 
 /**
- * Data returned by getInfo.
+ * Data returned by BitcoindClient's getInfo method.
  * 
  * @author Claus Nielsen
  */

@@ -17,8 +17,6 @@
  */
 package dk.clanie.bitcoin.client.response;
 
-
-
 /**
  * Common response object used for methods returning a simple String response.
  * 

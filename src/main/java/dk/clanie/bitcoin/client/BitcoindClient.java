@@ -37,16 +37,21 @@ import dk.clanie.bitcoin.SignatureHashAlgorithm;
 import dk.clanie.bitcoin.TransactionOutputRef;
 import dk.clanie.bitcoin.client.request.AddNodeAction;
 import dk.clanie.bitcoin.client.request.BitcoindJsonRpcRequest;
+import dk.clanie.bitcoin.client.response.BigDecimalResponse;
 import dk.clanie.bitcoin.client.response.BooleanResponse;
 import dk.clanie.bitcoin.client.response.DecodeRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.GetAddedNodeInfoResponse;
+import dk.clanie.bitcoin.client.response.GetBlockResponse;
 import dk.clanie.bitcoin.client.response.GetInfoResponse;
 import dk.clanie.bitcoin.client.response.GetMiningInfoResponse;
 import dk.clanie.bitcoin.client.response.GetTransactionResponse;
+import dk.clanie.bitcoin.client.response.IntegerResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAccountResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAddressResponse;
 import dk.clanie.bitcoin.client.response.ListUnspentResponse;
+import dk.clanie.bitcoin.client.response.LongResponse;
 import dk.clanie.bitcoin.client.response.SignRawTransactionResponse;
+import dk.clanie.bitcoin.client.response.StringArrayResponse;
 import dk.clanie.bitcoin.client.response.StringResponse;
 import dk.clanie.bitcoin.client.response.ValidateAddressResponse;
 import dk.clanie.bitcoin.client.response.VoidResponse;
@@ -271,16 +276,114 @@ public class BitcoindClient {
 	}
 
 
-	// TODO getaddressesbyaccount <account> Returns the list of addresses for the given account. N
-	// TODO getbalance [account] [minconf=1] If [account] is not specified, returns the server's total available balance.
-	// TODO If [account] is specified, returns the balance in the account. N
-	// TODO getblock <hash> Returns information about the given block hash. N
-	// TODO getblockcount Returns the number of blocks in the longest block chain. N
-	// TODO getblockhash <index> Returns hash of block in best-block-chain at <index> N
-	// TODO getconnectioncount Returns the number of connections to other nodes. N
-	// TODO getdifficulty Returns the proof-of-work difficulty as a multiple of the minimum difficulty. N
-	// TODO getgenerate Returns true or false whether bitcoind is currently generating hashes N
-	// TODO gethashespersec Returns a recent hashes per second performance measurement while generating. N
+	/**
+	 * Returns the list of addresses for the given account.
+	 * 
+	 * @param account
+	 * @return {@link StringArrayResponse} with bitcoin addresses.
+	 */
+	public StringArrayResponse getAddressesByAccount(String account) {
+		List<Object> params = newArrayList();
+		params.add(account);
+		return jsonRpc("getaddressesbyaccount", params, StringArrayResponse.class);
+	}
+
+
+	/**
+	 * Gets the balance of the given account or the server's total balance.
+	 * 
+	 * @param account
+	 *            - optional (may be null). If specified, returns the balance in
+	 *            the account. If not, returns the server's total available
+	 *            balance.
+	 * @param minConf
+	 *            - optional (may be null). Minim number of confirmations.
+	 * @return {@link BigDecimalResponse}
+	 */
+	public BigDecimalResponse getBalance(String account, Integer minConf) {
+		List<Object> params = newArrayList();
+		if (account != null || minConf != null) params.add(account);
+		if (minConf != null) params.add(minConf);
+		return jsonRpc("getbalance", params, BigDecimalResponse.class);
+	}
+
+
+
+	/**
+	 * Returns information about the given block hash.
+	 * 
+	 * @param hash - block hash
+	 * @return {@link GetBlockResponse}
+	 */
+	public GetBlockResponse getBlock(String hash) {
+		List<Object> params = newArrayList();
+		params.add(hash);
+		return jsonRpc("getblock", params, GetBlockResponse.class);
+	}
+
+
+	/**
+	 * Returns the number of blocks in the longest block chain.
+	 * 
+	 * @return {@link LongResponse} with number of blocks in the longest block chain.
+	 */
+	public LongResponse getBlockCount() {
+		return jsonRpc("getblockcount", EMPTY_LIST, LongResponse.class);
+	}
+
+
+	/**
+	 * Returns hash of block in best-block-chain at given index.
+	 * 
+	 * @param index
+	 * @return {@link StringResponse} with block hash.
+	 */
+	public StringResponse getBlockHash(Long index) {
+		List<Object> params = newArrayList();
+		params.add(index);
+		return jsonRpc("getblockhash", params, StringResponse.class);
+	}
+
+
+	/**
+	 * Returns the number of connections to other nodes.
+	 * 
+	 * @return {@link IntegerResponse} with number of connections.
+	 */
+	public IntegerResponse getConnectionCount() {
+		return jsonRpc("getconnectioncount", EMPTY_LIST, IntegerResponse.class);
+	}
+
+
+	/**
+	 * Returns the proof-of-work difficulty as a multiple of the minimum difficulty.
+	 * 
+	 * @return {@link LongResponse} with difficulty.
+	 */
+	public IntegerResponse getDifficulty() {
+		return jsonRpc("getdifficulty", EMPTY_LIST, IntegerResponse.class);
+	}
+
+
+	/**
+	 * Returns true or false whether bitcoind is currently generating hashes.
+	 * 
+	 * @return {@link BooleanResponse}, true if generating.
+	 */
+	public BooleanResponse getGenerate() {
+		return jsonRpc("getgenerate", EMPTY_LIST, BooleanResponse.class);
+	}
+
+
+	/**
+	 * Returns a recent hashes per second performance measurement while generating.
+	 * 
+	 * @return {@link LongResponse} with hashes per second.
+	 */
+	public LongResponse getHashesPerSecond() {
+		return jsonRpc("gethashespersec", EMPTY_LIST, LongResponse.class);
+	}
+
 
 	/**
 	 * Gets various state info.
@@ -318,7 +421,7 @@ public class BitcoindClient {
 	// TODO getrawtransaction <txid> [verbose=0] version 0.7 Returns raw transaction representation for given transaction id. N
 	// TODO getreceivedbyaccount [account] [minconf=1] Returns the total amount received by addresses with [account] in transactions with at least [minconf] confirmations. If [account] not provided return will include all transactions to all accounts. (version 0.3.24) N
 	// TODO getreceivedbyaddress <bitcoinaddress> [minconf=1] Returns the total amount received by <bitcoinaddress> in transactions with at least [minconf] confirmations. While some might consider this obvious, value reported by this only considers *receiving* transactions. It does not check payments that have been made *from* this address. In other words, this is not "getaddressbalance". Works only for addresses in the local wallet, external addresses will always show 0. N
-	
+
 
 	/**
 	 * Gets data regarding the transaction with the given id.

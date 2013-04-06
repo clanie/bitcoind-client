@@ -17,15 +17,61 @@
  */
 package dk.clanie.bitcoin.client.response;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+import dk.clanie.bitcoin.json.JsonExtra;
+
 /**
- * Response object returned by BitcoindClient's getInfo method.
- *
+ * Data returned by BitcoindClient's getBlock method
+ * 
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public class GetInfoResponse extends BitcoindJsonRpcResponse<GetInfoResult> {
+@JsonPropertyOrder({
+	"hash",
+	"confirmations",
+	"size",
+	"height",
+	"version",
+	"merkleroot",
+	"tx",
+	"time",
+	"nonce",
+	"bits",
+	"difficulty",
+	"previousblockhash",
+	"nextblockhash"
+})
+public class GetBlockResult extends JsonExtra {
+
+	private String hash;
+	private Integer confirmations;
+	private Integer size;
+	private Long height;
+	private Integer version;
+	
+	@JsonProperty("merkleroot")
+	private String merkleRoot;
+
+	@JsonProperty("tx")
+	private String[] transactions;
+
+	private Date time;
+	private Long nonce;
+	private String bits;
+	private BigDecimal difficulty;
+
+	@JsonProperty("previousblockhash")
+	private String previousBlockHash;
+
+	@JsonProperty("nextblockhash")
+	private String nextBlockHash;
 
 }

@@ -17,15 +17,12 @@
  */
 package dk.clanie.bitcoin.client.response;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-
 /**
- * Response object returned by BitcoindClient's getInfo method.
- *
+ * Common response object used for methods returning an array of Strings.
+ * 
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
-@RooJavaBean(settersByDefault = false)
-public class GetInfoResponse extends BitcoindJsonRpcResponse<GetInfoResult> {
+public class StringArrayResponse extends BitcoindJsonRpcResponse<String[]> {
 
 }

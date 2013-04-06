@@ -33,16 +33,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.clanie.bitcoin.AddressAndAmount;
 import dk.clanie.bitcoin.TransactionOutputRef;
 import dk.clanie.bitcoin.client.request.AddNodeAction;
+import dk.clanie.bitcoin.client.response.BigDecimalResponse;
 import dk.clanie.bitcoin.client.response.BooleanResponse;
 import dk.clanie.bitcoin.client.response.DecodeRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.GetAddedNodeInfoResponse;
+import dk.clanie.bitcoin.client.response.GetBlockResponse;
 import dk.clanie.bitcoin.client.response.GetInfoResponse;
 import dk.clanie.bitcoin.client.response.GetMiningInfoResponse;
 import dk.clanie.bitcoin.client.response.GetTransactionResponse;
+import dk.clanie.bitcoin.client.response.IntegerResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAccountResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAddressResponse;
 import dk.clanie.bitcoin.client.response.ListUnspentResponse;
+import dk.clanie.bitcoin.client.response.LongResponse;
 import dk.clanie.bitcoin.client.response.SignRawTransactionResponse;
+import dk.clanie.bitcoin.client.response.StringArrayResponse;
 import dk.clanie.bitcoin.client.response.StringResponse;
 import dk.clanie.bitcoin.client.response.ValidateAddressResponse;
 import dk.clanie.bitcoin.client.response.VoidResponse;
@@ -154,9 +159,77 @@ public class BitcoindClientIntegrationTest {
 
 	@Test
 	public void testGetAddedNodeInfo() throws Exception {
-		// TODO
-		// When calling with dns=false an oject is returned; when calling ith dns=true an array is returned.
 		GetAddedNodeInfoResponse addedNodeInfoResponse = bc.getAddedNodeInfo(true, "faucet.bitcoin.st");
+		print(addedNodeInfoResponse);
+	}
+
+
+	@Test
+	public void testGetAddressesByAccount() throws Exception {
+		StringArrayResponse addressesByAccount = bc.getAddressesByAccount("clanie");
+		print(addressesByAccount);
+	}
+
+
+	@Test
+	public void testGetBalance() throws Exception {
+		BigDecimalResponse balance = bc.getBalance("clanie", null);
+		print(balance);
+	}
+
+
+	@Test
+	public void testGetBlock() throws Exception {
+		GetBlockResponse block = bc.getBlock("00000000d0ef0ae127a9371bf7657a1dbd597a6e7dc9e46eea68b74e68602ffb");
+		print(block);
+	}
+
+
+	@Test
+	public void testGetBlockCount() throws Exception {
+		LongResponse count = bc.getBlockCount();
+		print(count);
+	}
+
+
+	@Test
+	public void testGetBlockHash() throws Exception {
+		StringResponse hash = bc.getBlockHash(4L);
+		print(hash);
+	}
+
+
+	@Test
+	public void testGetConnectionCount() throws Exception {
+		IntegerResponse count = bc.getConnectionCount();
+		print(count);
+	}
+
+
+	@Test
+	public void testGetDifficulty() throws Exception {
+		IntegerResponse count = bc.getDifficulty();
+		print(count);
+	}
+
+
+	@Test
+	public void testGetGenerate() throws Exception {
+		BooleanResponse generate = bc.getGenerate();
+		print(generate);
+	}
+
+
+	@Test
+	public void testGetHashesPerSecond() throws Exception {
+		LongResponse hps = bc.getHashesPerSecond();
+		print(hps);
+	}
+
+
+	@Test
+	public void testGetAddedNodeInfo_noDns() throws Exception {
+		GetAddedNodeInfoResponse addedNodeInfoResponse = bc.getAddedNodeInfo(false, "faucet.bitcoin.st");
 		print(addedNodeInfoResponse);
 	}
 
