@@ -33,12 +33,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.clanie.bitcoin.AddressAndAmount;
 import dk.clanie.bitcoin.TransactionOutputRef;
 import dk.clanie.bitcoin.client.request.AddNodeAction;
+import dk.clanie.bitcoin.client.request.TemplateRequest;
 import dk.clanie.bitcoin.client.response.BigDecimalResponse;
 import dk.clanie.bitcoin.client.response.BooleanResponse;
 import dk.clanie.bitcoin.client.response.DecodeRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.GetAddedNodeInfoResponse;
 import dk.clanie.bitcoin.client.response.GetBlockResponse;
 import dk.clanie.bitcoin.client.response.GetInfoResponse;
+import dk.clanie.bitcoin.client.response.GetBlockTemplateResponse;
 import dk.clanie.bitcoin.client.response.GetMiningInfoResponse;
 import dk.clanie.bitcoin.client.response.GetTransactionResponse;
 import dk.clanie.bitcoin.client.response.IntegerResponse;
@@ -74,6 +76,72 @@ public class BitcoindClientIntegrationTest {
 	private ObjectMapper om = new ObjectMapper();
 
 
+	
+//	addmultisigaddress <nrequired> <'["key","key"]'> [account]
+//	addnode <node> <add|remove|onetry>
+//	backupwallet <destination>
+//	createmultisig <nrequired> <'["key","key"]'>
+//	createrawtransaction [{"txid":txid,"vout":n},...] {address:amount,...}
+//	decoderawtransaction <hex string>
+//	dumpprivkey <bitcoinaddress>
+//	getaccount <bitcoinaddress>
+//	getaccountaddress <account>
+//	getaddednodeinfo <dns> [node]
+//	getaddressesbyaccount <account>
+//	getbalance [account] [minconf=1]
+//	getblock <hash>
+//	getblockcount
+//	getblockhash <index>
+//	getblocktemplate [params]
+//	getconnectioncount
+//	getdifficulty
+//	getgenerate
+//	gethashespersec
+//	getinfo
+//	getmininginfo
+//	getnewaddress [account]
+//	getpeerinfo
+//	getrawmempool
+//	getrawtransaction <txid> [verbose=0]
+//	getreceivedbyaccount <account> [minconf=1]
+//	getreceivedbyaddress <bitcoinaddress> [minconf=1]
+//	gettransaction <txid>
+//	gettxout <txid> <n> [includemempool=true]
+//	gettxoutsetinfo
+//	getwork [data]
+//	help [command]
+//	importprivkey <bitcoinprivkey> [label] [rescan=true]
+//	keypoolrefill
+//	listaccounts [minconf=1]
+//	listaddressgroupings
+//	listlockunspent
+//	listreceivedbyaccount [minconf=1] [includeempty=false]
+//	listreceivedbyaddress [minconf=1] [includeempty=false]
+//	listsinceblock [blockhash] [target-confirmations]
+//	listtransactions [account] [count=10] [from=0]
+//	listunspent [minconf=1] [maxconf=9999999]  ["address",...]
+//	lockunspent unlock? [array-of-Objects]
+//	move <fromaccount> <toaccount> <amount> [minconf=1] [comment]
+//	sendfrom <fromaccount> <tobitcoinaddress> <amount> [minconf=1] [comment] [comment-to]
+//	sendmany <fromaccount> {address:amount,...} [minconf=1] [comment]
+//	sendrawtransaction <hex string>
+//	sendtoaddress <bitcoinaddress> <amount> [comment] [comment-to]
+//	setaccount <bitcoinaddress> <account>
+//	setgenerate <generate> [genproclimit]
+//	settxfee <amount>
+//	signmessage <bitcoinaddress> <message>
+//	signrawtransaction <hex string> [{"txid":txid,"vout":n,"scriptPubKey":hex,"redeemScript":hex},...] [<privatekey1>,...] [sighashtype="ALL"]
+//	stop
+//	submitblock <hex data> [optional-params-obj]
+//	validateaddress <bitcoinaddress>
+//	verifymessage <bitcoinaddress> <signature> <message>
+//	walletlock
+//	walletpassphrase <passphrase> <timeout>
+//	walletpassphrasechange <oldpassphrase> <newpassphrase>	
+
+	
+	
+	
 	@Test
 	public void testBackupWallet() throws Exception {
 		VoidResponse backupWallet = bc.backupWallet("C:\\wallet.backup");
@@ -242,6 +310,13 @@ public class BitcoindClientIntegrationTest {
 
 
 	@Test
+	public void testGetBlockTemplate() throws Exception {
+		GetBlockTemplateResponse blockTemplate = bc.getBlockTemplate(new TemplateRequest(new String[]{"longpoll",  "coinbasetxn", "coinbasevalue", "proposal", "serverlist", "workid"}, "template"));
+		print(blockTemplate);
+	}
+
+
+	@Test
 	public void testGetMiningInfo() throws Exception {
 		GetMiningInfoResponse info = bc.getMiningInfo();
 		print(info);
@@ -257,7 +332,14 @@ public class BitcoindClientIntegrationTest {
 
 	@Test
 	public void testHelp() throws Exception {
-		StringResponse helpResponse = bc.help("verifymessage");
+		StringResponse helpResponse = bc.help("getmemorypool");
+		print(helpResponse);
+	}
+
+
+	@Test
+	public void testHelp_listCommands() throws Exception {
+		StringResponse helpResponse = bc.help(null);
 		print(helpResponse);
 	}
 

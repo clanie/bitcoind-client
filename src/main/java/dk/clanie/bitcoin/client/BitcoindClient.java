@@ -37,11 +37,13 @@ import dk.clanie.bitcoin.SignatureHashAlgorithm;
 import dk.clanie.bitcoin.TransactionOutputRef;
 import dk.clanie.bitcoin.client.request.AddNodeAction;
 import dk.clanie.bitcoin.client.request.BitcoindJsonRpcRequest;
+import dk.clanie.bitcoin.client.request.TemplateRequest;
 import dk.clanie.bitcoin.client.response.BigDecimalResponse;
 import dk.clanie.bitcoin.client.response.BooleanResponse;
 import dk.clanie.bitcoin.client.response.DecodeRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.GetAddedNodeInfoResponse;
 import dk.clanie.bitcoin.client.response.GetBlockResponse;
+import dk.clanie.bitcoin.client.response.GetBlockTemplateResponse;
 import dk.clanie.bitcoin.client.response.GetInfoResponse;
 import dk.clanie.bitcoin.client.response.GetMiningInfoResponse;
 import dk.clanie.bitcoin.client.response.GetTransactionResponse;
@@ -93,6 +95,7 @@ public class BitcoindClient {
 	public void setUrl(String url) {
 		this.url = url;
 	}
+
 
 
 	/**
@@ -153,6 +156,9 @@ public class BitcoindClient {
 	}
 
 
+	//	TODO createmultisig <nrequired> <'["key","key"]'>
+
+
 	/**
 	 * Creates a raw transaction for spending given inputs.
 	 * 
@@ -182,7 +188,6 @@ public class BitcoindClient {
 		params.add(txOutputs);
 		params.add(recipients);
 		return jsonRpc("createrawtransaction", params, StringResponse.class);
-
 	}
 
 
@@ -346,6 +351,19 @@ public class BitcoindClient {
 
 
 	/**
+	 * Gets a block template.
+	 *
+	 * @param templateRequest
+	 * @return {@link GetBlockResponse}
+	 */
+	public GetBlockTemplateResponse getBlockTemplate(TemplateRequest templateRequest) {
+		List<Object> params = newArrayList();
+		params.add(templateRequest);
+		return jsonRpc("getblocktemplate", params, GetBlockTemplateResponse.class);
+	}
+
+
+	/**
 	 * Returns the number of connections to other nodes.
 	 * 
 	 * @return {@link IntegerResponse} with number of connections.
@@ -394,16 +412,6 @@ public class BitcoindClient {
 		return jsonRpc("getinfo", EMPTY_LIST, GetInfoResponse.class);
 	}
 
-	// TODO getmemorypool [data] If [data] is not specified, returns data needed to construct a block to work on:
-	// TODO "version" : block version
-	// TODO "previousblockhash" : hash of current highest block
-	// TODO "transactions" : contents of non-coinbase transactions that should be included in the next block
-	// TODO "coinbasevalue" : maximum allowable input to coinbase transaction, including the generation award and transaction fees
-	// TODO "time" : timestamp appropriate for next block
-	// TODO "bits" : compressed target of next block
-	// TODO If [data] is specified, tries to solve the block and returns true if it was successful.
-	// TODO N
-
 
 	/**
 	 * Gets mining-related information.
@@ -422,7 +430,6 @@ public class BitcoindClient {
 	// TODO getreceivedbyaccount [account] [minconf=1] Returns the total amount received by addresses with [account] in transactions with at least [minconf] confirmations. If [account] not provided return will include all transactions to all accounts. (version 0.3.24) N
 	// TODO getreceivedbyaddress <bitcoinaddress> [minconf=1] Returns the total amount received by <bitcoinaddress> in transactions with at least [minconf] confirmations. While some might consider this obvious, value reported by this only considers *receiving* transactions. It does not check payments that have been made *from* this address. In other words, this is not "getaddressbalance". Works only for addresses in the local wallet, external addresses will always show 0. N
 
-
 	/**
 	 * Gets data regarding the transaction with the given id.
 	 * 
@@ -436,13 +443,9 @@ public class BitcoindClient {
 	}
 
 
+	// TODO gettxout <txid> <n> [includemempool=true]
+	// TODO gettxoutsetinfo
 	// TODO getwork [data] If [data] is not specified, returns formatted hash data to work on:
-	// TODO "midstate" : precomputed hash state after hashing the first half of the data
-	// TODO "data" : block data
-	// TODO "hash1" : formatted hash buffer for second hash
-	// TODO "target" : little endian hash target
-	// TODO If [data] is specified, tries to solve the block and returns true if it was successful.
-	// TODO N
 
 
 	/**
@@ -486,6 +489,7 @@ public class BitcoindClient {
 	// TODO keypoolrefill Fills the keypool, requires wallet passphrase to be set. Y
 	// TODO listaccounts [minconf=1] Returns Object that has account names as keys, account balances as values. N
 	// TODO listaddressgroupings version 0.7 Returns all addresses in the wallet and info used for coincontrol. N
+	// TODO listlockunspent version 0.8 Returns list of temporarily unspendable outputs
 
 
 	/**
@@ -519,6 +523,7 @@ public class BitcoindClient {
 		return jsonRpc("listreceivedbyaddress", params, ListReceivedByAddressResponse.class);
 	}
 
+
 	// TODO listsinceblock [blockhash] [target-confirmations] Get all transactions in blocks since block [blockhash], or all transactions if omitted. N
 	// TODO listtransactions [account] [count=10] [from=0] Returns up to [count] most recent transactions skipping the first [from] transactions for account [account]. If [account] not provided will return recent transaction from all accounts. N
 
@@ -547,13 +552,11 @@ public class BitcoindClient {
 	}
 
 
-	// TODO listlockunspent version 0.8 Returns list of temporarily unspendable outputs
 	// TODO lockunspent <unlock?> [array-of-objects] version 0.8 Updates list of temporarily unspendable outputs
 	// TODO move <fromaccount> <toaccount> <amount> [minconf=1] [comment] Move from one account in your wallet to another N
 	// TODO sendfrom <fromaccount> <tobitcoinaddress> <amount> [minconf=1] [comment] [comment-to] <amount> is a real and is rounded to 8 decimal places. Will send the given amount to the given address, ensuring the account has a valid balance using [minconf] confirmations. Returns the transaction ID if successful (not in JSON object). Y
 	// TODO sendmany <fromaccount> {address:amount,...} [minconf=1] [comment] amounts are double-precision floating point numbers Y
 	// TODO sendrawtransaction <hexstring> version 0.7 Submits raw transaction (serialized, hex-encoded) to local node and network. N
-
 
 	/**
 	 * Sends bitcoins to the given address.
@@ -615,6 +618,19 @@ public class BitcoindClient {
 
 
 	/**
+	 * Sets transaction fee.
+	 *
+	 * @param amount - transaction fee.
+	 * @return {@link BooleanResponse}
+	 */
+	public BooleanResponse setTxFee(BigDecimal amount) {
+		List<Object> params = newArrayList();
+		params.add(amount.setScale(SCALE));
+		return jsonRpc("settxfee", params, BooleanResponse.class);
+	}
+
+
+	/**
 	 * Sign a message with the private key of an address.
 	 * <p>
 	 * Requires unlocked wallet.
@@ -670,19 +686,6 @@ public class BitcoindClient {
 
 
 	/**
-	 * Sets transaction fee.
-	 *
-	 * @param amount - transaction fee.
-	 * @return {@link BooleanResponse}
-	 */
-	public BooleanResponse setTxFee(BigDecimal amount) {
-		List<Object> params = newArrayList();
-		params.add(amount.setScale(SCALE));
-		return jsonRpc("settxfee", params, BooleanResponse.class);
-	}
-
-
-	/**
 	 * Stop bitcoin server.
 	 *
 	 * @return
@@ -690,6 +693,9 @@ public class BitcoindClient {
 	public VoidResponse stop() {
 		return jsonRpc("stop", EMPTY_LIST, VoidResponse.class);
 	}
+
+
+	// TODO submitblock <hex data> [optional-params-obj]
 
 
 	/**
