@@ -36,6 +36,7 @@ import dk.clanie.bitcoin.client.request.AddNodeAction;
 import dk.clanie.bitcoin.client.request.TemplateRequest;
 import dk.clanie.bitcoin.client.response.BigDecimalResponse;
 import dk.clanie.bitcoin.client.response.BooleanResponse;
+import dk.clanie.bitcoin.client.response.CreateMultiSigResponse;
 import dk.clanie.bitcoin.client.response.DecodeRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.GetAddedNodeInfoResponse;
 import dk.clanie.bitcoin.client.response.GetBlockResponse;
@@ -76,76 +77,34 @@ public class BitcoindClientIntegrationTest {
 	private ObjectMapper om = new ObjectMapper();
 
 
-	
-//	addmultisigaddress <nrequired> <'["key","key"]'> [account]
-//	addnode <node> <add|remove|onetry>
-//	backupwallet <destination>
-//	createmultisig <nrequired> <'["key","key"]'>
-//	createrawtransaction [{"txid":txid,"vout":n},...] {address:amount,...}
-//	decoderawtransaction <hex string>
-//	dumpprivkey <bitcoinaddress>
-//	getaccount <bitcoinaddress>
-//	getaccountaddress <account>
-//	getaddednodeinfo <dns> [node]
-//	getaddressesbyaccount <account>
-//	getbalance [account] [minconf=1]
-//	getblock <hash>
-//	getblockcount
-//	getblockhash <index>
-//	getblocktemplate [params]
-//	getconnectioncount
-//	getdifficulty
-//	getgenerate
-//	gethashespersec
-//	getinfo
-//	getmininginfo
-//	getnewaddress [account]
-//	getpeerinfo
-//	getrawmempool
-//	getrawtransaction <txid> [verbose=0]
-//	getreceivedbyaccount <account> [minconf=1]
-//	getreceivedbyaddress <bitcoinaddress> [minconf=1]
-//	gettransaction <txid>
-//	gettxout <txid> <n> [includemempool=true]
-//	gettxoutsetinfo
-//	getwork [data]
-//	help [command]
-//	importprivkey <bitcoinprivkey> [label] [rescan=true]
-//	keypoolrefill
-//	listaccounts [minconf=1]
-//	listaddressgroupings
-//	listlockunspent
-//	listreceivedbyaccount [minconf=1] [includeempty=false]
-//	listreceivedbyaddress [minconf=1] [includeempty=false]
-//	listsinceblock [blockhash] [target-confirmations]
-//	listtransactions [account] [count=10] [from=0]
-//	listunspent [minconf=1] [maxconf=9999999]  ["address",...]
-//	lockunspent unlock? [array-of-Objects]
-//	move <fromaccount> <toaccount> <amount> [minconf=1] [comment]
-//	sendfrom <fromaccount> <tobitcoinaddress> <amount> [minconf=1] [comment] [comment-to]
-//	sendmany <fromaccount> {address:amount,...} [minconf=1] [comment]
-//	sendrawtransaction <hex string>
-//	sendtoaddress <bitcoinaddress> <amount> [comment] [comment-to]
-//	setaccount <bitcoinaddress> <account>
-//	setgenerate <generate> [genproclimit]
-//	settxfee <amount>
-//	signmessage <bitcoinaddress> <message>
-//	signrawtransaction <hex string> [{"txid":txid,"vout":n,"scriptPubKey":hex,"redeemScript":hex},...] [<privatekey1>,...] [sighashtype="ALL"]
-//	stop
-//	submitblock <hex data> [optional-params-obj]
-//	validateaddress <bitcoinaddress>
-//	verifymessage <bitcoinaddress> <signature> <message>
-//	walletlock
-//	walletpassphrase <passphrase> <timeout>
-//	walletpassphrasechange <oldpassphrase> <newpassphrase>	
 
-	
-	
-	
+	@Test
+	public void testAddMultiSigAddress() throws Exception {
+		List<String> keys = newArrayList();
+		keys.add("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq");
+		StringResponse addMultiSigAddress = bc.addMultiSigAddress(1, keys, "ACCOUNT1");
+		print(addMultiSigAddress);
+	}
+
+
+	@Test
+	public void testAddNode() throws Exception {
+		VoidResponse  addNode = bc.addNode("faucet.bitcoin.st", AddNodeAction.ADD);
+		print(addNode);
+	}
+
+
 	@Test
 	public void testBackupWallet() throws Exception {
 		VoidResponse backupWallet = bc.backupWallet("C:\\wallet.backup");
 		print(backupWallet);
+	}
+
+
+	@Test
+	public void testCreateMultiSig() throws Exception {
+		CreateMultiSigResponse createMultiSig = bc.createMultiSig(1, new String[]{"mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq"});
+		print(createMultiSig);
 	}
 
 
@@ -175,30 +134,8 @@ public class BitcoindClientIntegrationTest {
 
 
 	@Test
-	public void testAddMultiSigAddress() throws Exception {
-		List<String> keys = newArrayList();
-		keys.add("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq");
-		StringResponse addMultiSigAddress = bc.addMultiSigAddress(1, keys, "ACCOUNT1");
-		print(addMultiSigAddress);
-	}
-
-
-	@Test
-	public void testAddNode() throws Exception {
-		VoidResponse // addNode = bc.addNode("faucet.bitcoin.st", AddNodeAction.ADD);
-		addNode = bc.addNode("faucet.bitcoin.stXX", AddNodeAction.ADD);
-		addNode = bc.addNode("faucet.bitcoin.stYY", AddNodeAction.ADD);
-		addNode = bc.addNode("faucet.bitcoin.stZZ", AddNodeAction.ADD);
-		addNode = bc.addNode("faucet.bitcoin.stZZ", AddNodeAction.REMOVE);
-		addNode = bc.addNode("faucet.bitcoin.stYY", AddNodeAction.ONE_TRY);
-		print(addNode);
-	}
-
-
-	@Test
 	public void testDumpPrivateKey() throws Exception {
 		StringResponse dumpPrivateKeyResponse = bc.dumpPrivateKey("mxphxiG4Ggjb3bKFbeFnsuK2qde3541S93");
-		//		StringResponse dumpPrivateKeyResponse = bc.dumpPrivateKey("mof5U4zusfjigWYwwjf6c88Qn77KEafStx");
 		print(dumpPrivateKeyResponse);
 	}
 
@@ -212,7 +149,6 @@ public class BitcoindClientIntegrationTest {
 
 	@Test
 	public void testGetAccount() throws Exception {
-		//		StringResponse getAccountResponse = bc.getAccount("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq");
 		StringResponse getAccountResponse = bc.getAccount("mof5U4zusfjigWYwwjf6c88Qn77KEafStx");
 		print(getAccountResponse);
 	}
@@ -228,6 +164,13 @@ public class BitcoindClientIntegrationTest {
 	@Test
 	public void testGetAddedNodeInfo() throws Exception {
 		GetAddedNodeInfoResponse addedNodeInfoResponse = bc.getAddedNodeInfo(true, "faucet.bitcoin.st");
+		print(addedNodeInfoResponse);
+	}
+
+
+	@Test
+	public void testGetAddedNodeInfo_noDns() throws Exception {
+		GetAddedNodeInfoResponse addedNodeInfoResponse = bc.getAddedNodeInfo(false, "faucet.bitcoin.st");
 		print(addedNodeInfoResponse);
 	}
 
@@ -268,6 +211,13 @@ public class BitcoindClientIntegrationTest {
 
 
 	@Test
+	public void testGetBlockTemplate() throws Exception {
+		GetBlockTemplateResponse blockTemplate = bc.getBlockTemplate(new TemplateRequest(new String[]{"longpoll",  "coinbasetxn", "coinbasevalue", "proposal", "serverlist", "workid"}, "template"));
+		print(blockTemplate);
+	}
+
+
+	@Test
 	public void testGetConnectionCount() throws Exception {
 		IntegerResponse count = bc.getConnectionCount();
 		print(count);
@@ -296,23 +246,9 @@ public class BitcoindClientIntegrationTest {
 
 
 	@Test
-	public void testGetAddedNodeInfo_noDns() throws Exception {
-		GetAddedNodeInfoResponse addedNodeInfoResponse = bc.getAddedNodeInfo(false, "faucet.bitcoin.st");
-		print(addedNodeInfoResponse);
-	}
-
-
-	@Test
 	public void testGetInfo() throws Exception {
 		GetInfoResponse info = bc.getInfo();
 		print(info);
-	}
-
-
-	@Test
-	public void testGetBlockTemplate() throws Exception {
-		GetBlockTemplateResponse blockTemplate = bc.getBlockTemplate(new TemplateRequest(new String[]{"longpoll",  "coinbasetxn", "coinbasevalue", "proposal", "serverlist", "workid"}, "template"));
-		print(blockTemplate);
 	}
 
 
@@ -323,6 +259,14 @@ public class BitcoindClientIntegrationTest {
 	}
 
 
+	// TODO getnewaddress [account]
+	// TODO getpeerinfo
+	// TODO getrawmempool
+	// TODO getrawtransaction <txid> [verbose=0]
+	// TODO getreceivedbyaccount <account> [minconf=1]
+	// TODO getreceivedbyaddress <bitcoinaddress> [minconf=1]
+
+
 	@Test
 	public void testGetTransaction() throws Exception {
 		GetTransactionResponse transactionResponse = bc.getTransaction("9e8485aed75a0e0c8b1bbcda5f3e1426a7da914cb5732f73dd8bd6128344a608");
@@ -330,9 +274,14 @@ public class BitcoindClientIntegrationTest {
 	}
 
 
+	// TODO gettxout <txid> <n> [includemempool=true]
+	// TODO gettxoutsetinfo
+	// TODO getwork [data]
+
+
 	@Test
 	public void testHelp() throws Exception {
-		StringResponse helpResponse = bc.help("getmemorypool");
+		StringResponse helpResponse = bc.help("createmultisig");
 		print(helpResponse);
 	}
 
@@ -351,6 +300,12 @@ public class BitcoindClientIntegrationTest {
 	}
 
 
+	// TODO keypoolrefill
+	// TODO listaccounts [minconf=1]
+	// TODO listaddressgroupings
+	// TODO listlockunspent
+
+
 	@Test
 	public void testListReceivedByAccount() throws Exception {
 		ListReceivedByAccountResponse listReceivedByAccountResponse = bc.listReceivedByAccount(0, true);
@@ -365,6 +320,10 @@ public class BitcoindClientIntegrationTest {
 	}
 
 
+	// TODO listsinceblock [blockhash] [target-confirmations]
+	// TODO listtransactions [account] [count=10] [from=0]
+
+
 	@Test
 	public void testListUnspent() throws Exception {
 		ListUnspentResponse listUnspentResponse = bc.listUnspent(0, 999999, "mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq", "mprSidR7coMDYzfnTXdq6taxDZyEb3fopo");
@@ -372,11 +331,11 @@ public class BitcoindClientIntegrationTest {
 	}
 
 
-	@Test
-	public void testWalletPassPhrase() throws Exception {
-		VoidResponse walletPassPhraseResponse = bc.walletPassPhrase("popidop", 99999999);
-		print(walletPassPhraseResponse);
-	}
+	// TODO lockunspent unlock? [array-of-Objects]
+	// TODO move <fromaccount> <toaccount> <amount> [minconf=1] [comment]
+	// TODO sendfrom <fromaccount> <tobitcoinaddress> <amount> [minconf=1] [comment] [comment-to]
+	// TODO sendmany <fromaccount> {address:amount,...} [minconf=1] [comment]
+	// TODO sendrawtransaction <hex string>
 
 
 	@Test
@@ -401,6 +360,13 @@ public class BitcoindClientIntegrationTest {
 
 
 	@Test
+	public void testSetTxFee() throws Exception {
+		BooleanResponse setTxFeeResponse = bc.setTxFee(BigDecimal.valueOf(0.00001d));
+		print(setTxFeeResponse);
+	}
+
+
+	@Test
 	public void testSignMessage() throws Exception {
 		StringResponse signMessage = bc.signMessage("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq", "We love Bitcoin");
 		print(signMessage);
@@ -415,17 +381,14 @@ public class BitcoindClientIntegrationTest {
 
 
 	@Test
-	public void testSetTxFee() throws Exception {
-		BooleanResponse setTxFeeResponse = bc.setTxFee(BigDecimal.valueOf(0.00001d));
-		print(setTxFeeResponse);
-	}
-
-
-	@Test
 	public void testStop() throws Exception {
 		VoidResponse stopResponse = bc.stop();
 		print(stopResponse);
 	}
+
+
+
+	// TODO submitblock <hex data> [optional-params-obj]
 
 
 	@Test
@@ -453,6 +416,13 @@ public class BitcoindClientIntegrationTest {
 	public void testWalletLock() throws Exception {
 		VoidResponse walletLockResponse = bc.walletLock();
 		print(walletLockResponse);
+	}
+
+
+	@Test
+	public void testWalletPassPhrase() throws Exception {
+		VoidResponse walletPassPhraseResponse = bc.walletPassPhrase("popidop", 99999999);
+		print(walletPassPhraseResponse);
 	}
 
 

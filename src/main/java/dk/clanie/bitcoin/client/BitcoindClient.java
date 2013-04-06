@@ -40,6 +40,7 @@ import dk.clanie.bitcoin.client.request.BitcoindJsonRpcRequest;
 import dk.clanie.bitcoin.client.request.TemplateRequest;
 import dk.clanie.bitcoin.client.response.BigDecimalResponse;
 import dk.clanie.bitcoin.client.response.BooleanResponse;
+import dk.clanie.bitcoin.client.response.CreateMultiSigResponse;
 import dk.clanie.bitcoin.client.response.DecodeRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.GetAddedNodeInfoResponse;
 import dk.clanie.bitcoin.client.response.GetBlockResponse;
@@ -156,7 +157,24 @@ public class BitcoindClient {
 	}
 
 
-	//	TODO createmultisig <nrequired> <'["key","key"]'>
+	/**
+	 * Creates a multi-signature address.
+	 * <p>
+	 * This is just like "addmultisigaddress" but instead of adding the multisig
+	 * address/redeemScript to the wallet, returns them in a object.
+	 * 
+	 * @param nRequired
+	 *            - number of signatures required.
+	 * @param keys
+	 *            -
+	 * @return {@link CreateMultiSigResponse}
+	 */
+	public CreateMultiSigResponse createMultiSig(Integer nRequired, String[] keys) {
+		List<Object> params = newArrayList();
+		params.add(nRequired);
+		if (keys != null) params.add(keys);
+		return jsonRpc("createmultisig", params, CreateMultiSigResponse.class);
+	}
 
 
 	/**

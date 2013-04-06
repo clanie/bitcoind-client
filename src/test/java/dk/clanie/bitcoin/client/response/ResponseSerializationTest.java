@@ -65,6 +65,7 @@ public class ResponseSerializationTest {
 	 */
 	@Test
 	@Ignore
+	// TODO Remove when Jackson has been fixed.
 	public void testDoubleUnwrapped() throws Exception {
 		File file = new File("src/test/resources/sampleResponse/_DOUBLE_UNWRAP.json");
 		String jsonSample = IOUtils.toString(file.toURI());

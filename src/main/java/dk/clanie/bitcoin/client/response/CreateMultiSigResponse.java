@@ -17,26 +17,12 @@
  */
 package dk.clanie.bitcoin.client.response;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
-import dk.clanie.bitcoin.json.JsonExtra;
-
 /**
- * Data returned by BitcoindClient's signRawTransaction method.
+ * Response object returned by BitcoindClient's createMultiSig method.
  * 
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
-@RooJavaBean(settersByDefault = false)
-@JsonPropertyOrder({
-	"hex", 
-	"complete" 
-})
-public class SignRawTransactionResult extends JsonExtra {
-
-	private String hex;
-	private Boolean complete;
+public class CreateMultiSigResponse extends BitcoindJsonRpcResponse<CreateMultiSigResult> {
 
 }
