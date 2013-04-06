@@ -17,15 +17,61 @@
  */
 package dk.clanie.bitcoin.client.response;
 
+import java.util.Date;
+
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+import dk.clanie.bitcoin.TransactionInput;
+import dk.clanie.bitcoin.TransactionOutput;
+import dk.clanie.bitcoin.json.JsonExtra;
+
 /**
- * Response object returned by BitcoindClient's getTransaction method.
- *
+ * Data returned by BitcoindClient's getRawTransaction method.
+ * 
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public class GetTransactionResponse extends BitcoindJsonRpcResponse<GetTransactionResult> {
+@JsonPropertyOrder({
+	"hex", 
+	"txid",
+	"version",
+	"locktime",
+	"vin",
+	"vout",
+	"blockhash",
+	"confirmations",
+	"time",
+	"blocktime"
+})
+public class GetRawTransactionResult extends JsonExtra {
+
+	private String hex;
+
+	@JsonProperty("txid")
+	private String txId;
+
+	public Integer version;
+
+	@JsonProperty("locktime")
+	private Integer lockTime;
+
+	@JsonProperty("vin")
+	private TransactionInput[] txInputs;
+
+	@JsonProperty("vout")
+	private TransactionOutput[] txOutputs;
+
+	@JsonProperty("blockhash")
+	private String blockHash;
+
+	private Integer confirmations;
+	private Date time;
+
+	@JsonProperty("blocktime")
+	private Date blockTime;
 
 }

@@ -20,12 +20,12 @@ package dk.clanie.bitcoin.client.response;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
 /**
- * Response object returned by BitcoindClient's getTransaction method.
+ * Response object returned by BitcoindClient's getTxOutSetInfo method.
  *
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public class GetTransactionResponse extends BitcoindJsonRpcResponse<GetTransactionResult> {
+public class GetTxOutSetInfoResponse extends BitcoindJsonRpcResponse<GetTxOutSetInfoResult> {
 
 }

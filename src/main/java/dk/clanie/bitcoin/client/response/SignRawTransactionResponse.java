@@ -20,7 +20,7 @@ package dk.clanie.bitcoin.client.response;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
 /**
- * Response object returned by signRawTransaction.
+ * Response object returned by BitcoindClient's signRawTransaction method.
  *
  * @author Claus Nielsen
  */

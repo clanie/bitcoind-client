@@ -19,13 +19,35 @@ package dk.clanie.bitcoin.client.response;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+import dk.clanie.bitcoin.json.JsonExtra;
+
 /**
- * Response object returned by BitcoindClient's getTransaction method.
- *
+ * Data returned by BitcoindClient's getTxOutSetInfo method.
+ * 
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public class GetTransactionResponse extends BitcoindJsonRpcResponse<GetTransactionResult> {
+@JsonPropertyOrder({
+	"bestblock",
+	"transactions",
+	"txouts",
+	"bytes_serialized"
+})
+public class GetTxOutSetInfoResult extends JsonExtra {
+
+	@JsonProperty("bestblock")
+	private String bestBlock;
+
+	private Integer transactions;
+
+	@JsonProperty("txouts")
+	private Integer txOuts;
+
+	@JsonProperty("bytes_serialized")
+	private Integer bytesSerialized;
 
 }

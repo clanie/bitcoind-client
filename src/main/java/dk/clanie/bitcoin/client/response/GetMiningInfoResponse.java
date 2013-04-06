@@ -20,7 +20,7 @@ package dk.clanie.bitcoin.client.response;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
 /**
- * Response object returned by getMiningInfo.
+ * Response object returned by BitcoindClient's getPeerInfo method.
  *
  * @author Claus Nielsen
  */

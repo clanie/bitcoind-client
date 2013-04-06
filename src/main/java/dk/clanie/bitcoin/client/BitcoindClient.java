@@ -47,7 +47,11 @@ import dk.clanie.bitcoin.client.response.GetBlockResponse;
 import dk.clanie.bitcoin.client.response.GetBlockTemplateResponse;
 import dk.clanie.bitcoin.client.response.GetInfoResponse;
 import dk.clanie.bitcoin.client.response.GetMiningInfoResponse;
+import dk.clanie.bitcoin.client.response.GetPeerInfoResponse;
+import dk.clanie.bitcoin.client.response.GetRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.GetTransactionResponse;
+import dk.clanie.bitcoin.client.response.GetTxOutResponse;
+import dk.clanie.bitcoin.client.response.GetTxOutSetInfoResponse;
 import dk.clanie.bitcoin.client.response.IntegerResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAccountResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAddressResponse;
@@ -441,12 +445,122 @@ public class BitcoindClient {
 	}
 
 
-	// TODO getnewaddress [account] Returns a new bitcoin address for receiving payments. If [account] is specified (recommended), it is added to the address book so payments received with the address will be credited to [account]. N
-	// TODO getpeerinfo version 0.7 Returns data about each connected node. N
-	// TODO getrawmempool version 0.7 Returns all transaction ids in memory pool N
-	// TODO getrawtransaction <txid> [verbose=0] version 0.7 Returns raw transaction representation for given transaction id. N
-	// TODO getreceivedbyaccount [account] [minconf=1] Returns the total amount received by addresses with [account] in transactions with at least [minconf] confirmations. If [account] not provided return will include all transactions to all accounts. (version 0.3.24) N
-	// TODO getreceivedbyaddress <bitcoinaddress> [minconf=1] Returns the total amount received by <bitcoinaddress> in transactions with at least [minconf] confirmations. While some might consider this obvious, value reported by this only considers *receiving* transactions. It does not check payments that have been made *from* this address. In other words, this is not "getaddressbalance". Works only for addresses in the local wallet, external addresses will always show 0. N
+	/**
+	 * Returns a new bitcoin address for receiving payments. If
+	 * <code>account</code> is specified (recommended), it is added to the
+	 * address book so payments received with the address will be credited to
+	 * <code>account</code>.
+	 * 
+	 * @param account
+	 *            - account to associate with the new address.
+	 * @return {@link StringResponse} with the new address.
+	 */
+	public StringResponse getNewAddress(String account) {
+		List<Object> params = newArrayList();
+		if (account != null) params.add(account);
+		return jsonRpc("getnewaddress", params, StringResponse.class);
+	}
+
+
+
+	/**
+	 * Returns data about each connected node.
+	 * 
+	 * @return {@link GetPeerInfoResponse}
+	 * 
+	 * @since bitcoind 0.7
+	 */
+	public GetPeerInfoResponse getPeerInfo() {
+		return jsonRpc("getpeerinfo", EMPTY_LIST, GetPeerInfoResponse.class);
+	}
+
+
+	/**
+	 * Returns all transaction ids in memory pool.
+	 * 
+	 * @return {@link StringArrayResponse} with transaction ids.
+	 * 
+	 * @since bitcoind 0.7
+	 */
+	public StringArrayResponse getRawMemPool() {
+		return jsonRpc("getrawmempool", EMPTY_LIST, StringArrayResponse.class);
+	}
+
+
+	/**
+	 * Returns raw transaction representation for given transaction id.
+	 * 
+	 * @param txId
+	 *            - transaction id
+	 * @return {@link StringResponse} with hex encoded raw transaction.
+	 * 
+	 * @since bitcoind 0.7
+	 */
+	public StringResponse getRawTransaction(String txId) {
+		List<Object> params = newArrayList();
+		params.add(txId);
+		return jsonRpc("getrawtransaction", params, StringResponse.class);
+	}
+
+
+	/**
+	 * Returns raw transaction representation for given transaction id.
+	 * 
+	 * @param txId
+	 *            - transaction id
+	 * @return {@link GetRawTransactionResponse}
+	 * 
+	 * @since bitcoind 0.7
+	 */
+	public GetRawTransactionResponse getRawTransaction_verbose(String txId) {
+		List<Object> params = newArrayList();
+		params.add(txId);
+		params.add(1); // verbose
+		return jsonRpc("getrawtransaction", params, GetRawTransactionResponse.class);
+	}
+
+
+	/**
+	 * Returns the total amount received by addresses with <code>account</code>
+	 * in transactions with at least <code>minconf</code> confirmations.
+	 * 
+	 * @param account
+	 * @param minConf
+	 *            - optional, default 1
+	 * @return {@link BigDecimalResponse}
+	 * 
+	 * @since bitcoind 0.3.24
+	 */
+	public BigDecimalResponse getReceivedByAccount(String account, Integer minConf) {
+		List<Object> params = newArrayList();
+		params.add(account == null ? "" : account);
+		params.add(firstNotNull(minConf, 1));
+		return jsonRpc("getreceivedbyaccount", params, BigDecimalResponse.class);
+	}
+
+
+	/**
+	 * Returns the total amount received by the given address in transactions
+	 * with at least <code>minconf</code> confirmations. While some might
+	 * consider this obvious, value reported by this only considers
+	 * <b>receiving</b> transactions. It does not check payments that have been
+	 * made <b>from</b> this address. In other words, this is not
+	 * "getAddressBalance". Works only for addresses in the local wallet,
+	 * external addresses will always show 0.
+	 * 
+	 * @param address
+	 *            - bitcoin address
+	 * @param minConf
+	 *            - optional, default 1
+	 * @return {@link BigDecimalResponse}
+	 */
+	public BigDecimalResponse getReceivedByAddress(String address, Integer minConf) {
+		List<Object> params = newArrayList();
+		params.add(address == null ? "" : address);
+		params.add(firstNotNull(minConf, 1));
+		return jsonRpc("getreceivedbyaddress", params, BigDecimalResponse.class);
+	}
+
 
 	/**
 	 * Gets data regarding the transaction with the given id.
@@ -461,8 +575,36 @@ public class BitcoindClient {
 	}
 
 
-	// TODO gettxout <txid> <n> [includemempool=true]
-	// TODO gettxoutsetinfo
+	/**
+	 * Returns details about an unspent transaction output.
+	 * 
+	 * @param txId
+	 *            - transaction id
+	 * @param n
+	 *            - output number
+	 * @param includeMemoryPool
+	 *            - optional, default true.
+	 * @return {@link GetTxOutResponse}
+	 */
+	public GetTxOutResponse getTxOut(String txId, Integer n, Boolean includeMemoryPool) {
+		List<Object> params = newArrayList();
+		params.add(txId);
+		params.add(n);
+		if (includeMemoryPool != null) params.add(includeMemoryPool);
+		return jsonRpc("gettxout", params, GetTxOutResponse.class);
+	}
+
+
+	/**
+	 * Returns statistics about the unspent transaction output set.
+	 * 
+	 * @return
+	 */
+	public GetTxOutSetInfoResponse getTxOutSetInfo() {
+		return jsonRpc("gettxoutsetinfo", EMPTY_LIST, GetTxOutSetInfoResponse.class);
+	}
+
+
 	// TODO getwork [data] If [data] is not specified, returns formatted hash data to work on:
 
 
@@ -474,9 +616,7 @@ public class BitcoindClient {
 	 */
 	public StringResponse help(String command) {
 		List<Object> params = newArrayList();
-		if (command != null) {
-			params.add(command);
-		}
+		if (command != null) params.add(command);
 		return jsonRpc("help", params, StringResponse.class);
 	}
 
@@ -672,20 +812,28 @@ public class BitcoindClient {
 	 * Signs inputs for raw transaction (serialized, hex-encoded).
 	 * <p>
 	 * 
-	 * nReturns json object with keys:  hex : raw transaction with signature(s) (hex-encoded string)
-	 * complete : 1 if transaction has a complete set of signature (0 if not)
+	 * nReturns json object with keys: hex : raw transaction with signature(s)
+	 * (hex-encoded string) complete : 1 if transaction has a complete set of
+	 * signature (0 if not)
 	 * <p>
 	 * Requires unlocked wallet.
 	 * 
-	 * {"result":"signrawtransaction <hex string> [{\"txid\":txid,\"vout\":n,\"scriptPubKey\":hex,\"redeemScript\":hex},...]
+	 * {"result":"signrawtransaction <hex string> [{\
+	 * "txid\":txid,\"vout\":n,\"scriptPubKey\":hex,\"redeemScript\":hex},...]
 	 * [<privatekey1>,...] [sighashtype=\"ALL\"]\n
 	 * 
-	 * @param hex - raw unsigned transaction.
-	 * @param requiredTxOuts - optional (may be null). An array of previous transaction outputs that
-	 * this transaction depends on but may not yet be in the block chain
-	 * @param privKeys - optional (may be null). An array of base58-encoded private keys that,
-	 * if given, will be the only keys used to sign the transaction.
-	 * @param sigHash - optional (may be null).
+	 * @param hex
+	 *            - raw unsigned transaction.
+	 * @param requiredTxOuts
+	 *            - optional (may be null). An array of previous transaction
+	 *            outputs that this transaction depends on but may not yet be in
+	 *            the block chain
+	 * @param privKeys
+	 *            - optional (may be null). An array of base58-encoded private
+	 *            keys that, if given, will be the only keys used to sign the
+	 *            transaction.
+	 * @param sigHash
+	 *            - optional (may be null).
 	 * @return
 	 * 
 	 * @since bitcoind 0.7

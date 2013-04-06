@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import dk.clanie.bitcoin.json.JsonExtra;
 
 /**
- * Data returned by BitcoindClient's signRawTransaction method.
+ * Data returned by BitcoindClient's BitcoindClient's signRawTransaction method.
  * 
  * @author Claus Nielsen
  */

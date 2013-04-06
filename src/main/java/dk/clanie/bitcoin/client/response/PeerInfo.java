@@ -17,6 +17,8 @@
  */
 package dk.clanie.bitcoin.client.response;
 
+import java.util.Date;
+
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,49 +27,58 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import dk.clanie.bitcoin.json.JsonExtra;
 
 /**
- * Data returned by BitcoindClient's getMiningInfo method.
+ * Data returned by BitcoindClient's getPeerInfo method.
  * 
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
 @JsonPropertyOrder({
-	"blocks",
-	"currentblocksize",
-	"currentblocktx",
-	"difficulty",
-	"errors",
-	"generate",
-	"genproclimit",
-	"hashespersec",
-	"pooledtx",
-	"testnet"
+	"addr",
+	"services",
+	"lastsend",
+	"lastrecv",
+	"conntime",
+	"version",
+	"subver",
+	"inbound",
+	"releasetime",
+	"startingheight",
+	"banscore"
 })
-public class GetMiningInfoResult extends JsonExtra {
+public class PeerInfo extends JsonExtra {
 
-	private Long blocks;
+	/**
+	 * Network address.
+	 */
+	@JsonProperty("addr")
+	private String address;
 
-	@JsonProperty("currentblocksize")
-	private Integer currentBlockSize;
+	private String services;
+	
+	@JsonProperty("lastsend")
+	private Date lastSend;
+	
+	@JsonProperty("lastrecv")
+	private Date lastRecv;
+	
+	@JsonProperty("conntime")
+	private Date connTime;
+	
+	private Integer version;
+	
+	@JsonProperty("subver")
+	private String subVersion;
 
-	@JsonProperty("currentblocktx")
-	private Integer currentBlockTx;
-
-	private Double difficulty;
-
-	private String errors;
-
-	private Boolean generate;
-
-	@JsonProperty("genproclimit")
-	private Integer genProcLlimit;
-
-	@JsonProperty("hashespersec")
-	private Integer hashespersec;
-
-	@JsonProperty("pooledtx")
-	private Integer pooledTx;
-
-	private Boolean testnet;
+	private Boolean inbound;
+	
+	@JsonProperty("releasetime")
+	private Date releaseTime;
+	
+	@JsonProperty("startingheight")
+	private Long startingHeight;
+	
+	@JsonProperty("banscore")
+	private Integer banScore;
 
 }

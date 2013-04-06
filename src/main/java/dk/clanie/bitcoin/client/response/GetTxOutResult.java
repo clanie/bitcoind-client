@@ -17,15 +17,42 @@
  */
 package dk.clanie.bitcoin.client.response;
 
+import java.math.BigDecimal;
+
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+import dk.clanie.bitcoin.ScriptPubKey;
+import dk.clanie.bitcoin.json.JsonExtra;
+
 /**
- * Response object returned by BitcoindClient's getTransaction method.
- *
+ * Data about a transaction output as returned by BitcoindClient's getTxOut method.
+ * 
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public class GetTransactionResponse extends BitcoindJsonRpcResponse<GetTransactionResult> {
+@JsonPropertyOrder({
+	"bestblock",
+	"confirmations",
+	"value",
+	"scriptPubKey",
+	"version",
+	"coinbase"
+})
+public class GetTxOutResult extends JsonExtra {
 
+	@JsonProperty("bestblock")
+	private String bestBlock;
+	
+	private Integer confirmations;
+	private BigDecimal value;
+	private ScriptPubKey scriptPubKey;
+	private Integer version;
+
+	@JsonProperty("coinbase")
+	private Boolean coinBase;
+	
 }

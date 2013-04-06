@@ -40,10 +40,14 @@ import dk.clanie.bitcoin.client.response.CreateMultiSigResponse;
 import dk.clanie.bitcoin.client.response.DecodeRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.GetAddedNodeInfoResponse;
 import dk.clanie.bitcoin.client.response.GetBlockResponse;
-import dk.clanie.bitcoin.client.response.GetInfoResponse;
 import dk.clanie.bitcoin.client.response.GetBlockTemplateResponse;
+import dk.clanie.bitcoin.client.response.GetInfoResponse;
 import dk.clanie.bitcoin.client.response.GetMiningInfoResponse;
+import dk.clanie.bitcoin.client.response.GetPeerInfoResponse;
+import dk.clanie.bitcoin.client.response.GetRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.GetTransactionResponse;
+import dk.clanie.bitcoin.client.response.GetTxOutResponse;
+import dk.clanie.bitcoin.client.response.GetTxOutSetInfoResponse;
 import dk.clanie.bitcoin.client.response.IntegerResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAccountResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAddressResponse;
@@ -259,12 +263,53 @@ public class BitcoindClientIntegrationTest {
 	}
 
 
-	// TODO getnewaddress [account]
-	// TODO getpeerinfo
-	// TODO getrawmempool
-	// TODO getrawtransaction <txid> [verbose=0]
-	// TODO getreceivedbyaccount <account> [minconf=1]
-	// TODO getreceivedbyaddress <bitcoinaddress> [minconf=1]
+	@Test
+	public void testGetNewAddress() throws Exception {
+		StringResponse newAddress = bc.getNewAddress("BitEater");
+		print(newAddress);
+	}
+
+
+	@Test
+	public void testGetPeerInfo() throws Exception {
+		GetPeerInfoResponse info = bc.getPeerInfo();
+		print(info);
+	}
+
+
+	@Test
+	public void testGetRawMemPool() throws Exception {
+		StringArrayResponse response = bc.getRawMemPool();
+		print(response);
+	}
+
+
+	@Test
+	public void testGetRawTransaction() throws Exception {
+		StringResponse response = bc.getRawTransaction("9e8485aed75a0e0c8b1bbcda5f3e1426a7da914cb5732f73dd8bd6128344a608");
+		print(response);
+	}
+
+
+	@Test
+	public void testGetRawTransaction_verbose() throws Exception {
+		GetRawTransactionResponse response = bc.getRawTransaction_verbose("9e8485aed75a0e0c8b1bbcda5f3e1426a7da914cb5732f73dd8bd6128344a608");
+		print(response);
+	}
+
+
+	@Test
+	public void testGetReceivedByAccount() throws Exception {
+		BigDecimalResponse received = bc.getReceivedByAccount("clanie", null);
+		print(received);
+	}
+	
+	
+	@Test
+	public void testGetReceivedByAddress() throws Exception {
+		BigDecimalResponse received = bc.getReceivedByAddress("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq", null);
+		print(received);
+	}
 
 
 	@Test
@@ -274,14 +319,26 @@ public class BitcoindClientIntegrationTest {
 	}
 
 
-	// TODO gettxout <txid> <n> [includemempool=true]
-	// TODO gettxoutsetinfo
+	@Test
+	public void testGetTxOut() throws Exception {
+		GetTxOutResponse txOut = bc.getTxOut("9e8485aed75a0e0c8b1bbcda5f3e1426a7da914cb5732f73dd8bd6128344a608", 1, null);
+		print(txOut);
+	}
+
+	
+	@Test
+	public void testGetTxOutSetInfo() throws Exception {
+		GetTxOutSetInfoResponse txOutSetInfo = bc.getTxOutSetInfo();
+		print(txOutSetInfo);
+	}
+
+	
 	// TODO getwork [data]
 
 
 	@Test
 	public void testHelp() throws Exception {
-		StringResponse helpResponse = bc.help("createmultisig");
+		StringResponse helpResponse = bc.help("gettxoutsetinfo");
 		print(helpResponse);
 	}
 

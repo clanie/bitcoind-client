@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import dk.clanie.bitcoin.json.JsonExtra;
 
 /**
- * Data about a transaction as returned by getTransaction.
+ * Data about a transaction as returned by BitcoindClient's getTransaction method.
  * 
  * @author Claus Nielsen
  */
