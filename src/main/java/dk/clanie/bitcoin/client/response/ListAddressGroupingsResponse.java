@@ -17,14 +17,15 @@
  */
 package dk.clanie.bitcoin.client.response;
 
-import dk.clanie.bitcoin.json.JsonExtra;
+import org.springframework.roo.addon.javabean.RooJavaBean;
 
 /**
- * Holds any JSON object.
- * 
+ * Response object returned by BitcoindClient's listAddressGroupings method.
+ *
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
-public class JsonObject extends JsonExtra {
+@RooJavaBean(settersByDefault = false)
+public class ListAddressGroupingsResponse extends BitcoindJsonRpcResponse<ListAddressGroupingsResult[]> {
 
 }

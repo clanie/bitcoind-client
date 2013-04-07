@@ -52,7 +52,10 @@ import dk.clanie.bitcoin.client.response.GetRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.GetTransactionResponse;
 import dk.clanie.bitcoin.client.response.GetTxOutResponse;
 import dk.clanie.bitcoin.client.response.GetTxOutSetInfoResponse;
+import dk.clanie.bitcoin.client.response.GetWorkResponse;
 import dk.clanie.bitcoin.client.response.IntegerResponse;
+import dk.clanie.bitcoin.client.response.ListAccountsResponse;
+import dk.clanie.bitcoin.client.response.ListAddressGroupingsResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAccountResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAddressResponse;
 import dk.clanie.bitcoin.client.response.ListUnspentResponse;
@@ -294,7 +297,7 @@ public class BitcoindClient {
 	 */
 	public GetAddedNodeInfoResponse getAddedNodeInfo(Boolean dns, String node) {
 		// TODO When calling with dns=false an object is returned; when calling with dns=true an array is returned.
-		// TODO Currently only the array case (dns=true) is handled - see https://github.com/bitcoin/bitcoin/issues/2467
+		// TODO Currently only the array case (dns=true) is handled - see  https://github.com/bitcoin/bitcoin/issues/2467
 		// TODO If bitcoind isn't changed (bug 2467) implement special serialization of the response in _GetAddedNodeInfoResponse_dnsArgFalse.json
 		List<Object> params = newArrayList();
 		params.add(dns);
@@ -605,7 +608,28 @@ public class BitcoindClient {
 	}
 
 
-	// TODO getwork [data] If [data] is not specified, returns formatted hash data to work on:
+	/**
+	 * Returns formatted hash data to work on.
+	 * 
+	 * @return {@link GetWorkResponse} - true if succesfull.
+	 */
+	public GetWorkResponse getWork() {
+		return jsonRpc("getwork", EMPTY_LIST, GetWorkResponse.class);
+	}
+
+
+	/**
+	 * Tries to solve the block.
+	 * 
+	 * @param data
+	 *            - block data
+	 * @return {@link BooleanResponse} - true if succesfull.
+	 */
+	public BooleanResponse getWork(String data) {
+		List<Object> params = newArrayList();
+		params.add(data);
+		return jsonRpc("getwork", params, BooleanResponse.class);
+	}
 
 
 	/**
@@ -644,9 +668,47 @@ public class BitcoindClient {
 	}
 
 
-	// TODO keypoolrefill Fills the keypool, requires wallet passphrase to be set. Y
-	// TODO listaccounts [minconf=1] Returns Object that has account names as keys, account balances as values. N
-	// TODO listaddressgroupings version 0.7 Returns all addresses in the wallet and info used for coincontrol. N
+	/**
+	 * Fills the keypool.
+	 * <p>
+	 * Requires unlocked wallet.
+	 * 
+	 * @return {@link VoidResponse}
+	 */
+	public VoidResponse keyPoolRefill() {
+		return jsonRpc("keypoolrefill", EMPTY_LIST, VoidResponse.class);
+	}
+
+
+	/**
+	 * Returns account names and balances.
+	 * 
+	 * @param minConf
+	 *            - minimum number of confirmations for included transactions,
+	 *            default 1.
+	 * @return {@link ListAccountsResponse}
+	 */
+	public ListAccountsResponse listAccounts(Integer minConf) {
+		List<Object> params = newArrayList();
+		params.add(firstNotNull(minConf, 1));
+		return jsonRpc("listaccounts", params, ListAccountsResponse.class);
+	}
+	
+	
+	/**
+	 * Lists groups of addresses which have had their common ownership made
+	 * public by common use as inputs or as the resulting change in past
+	 * transactions.
+	 * 
+	 * @return {@link ListAddressGroupingsResponse}
+	 * 
+	 * @since bitcoind 0.7
+	 */
+	public ListAddressGroupingsResponse listAddressGroupings() {
+		return jsonRpc("listaddressgroupings", EMPTY_LIST, ListAddressGroupingsResponse.class);
+	}
+	
+	
 	// TODO listlockunspent version 0.8 Returns list of temporarily unspendable outputs
 
 

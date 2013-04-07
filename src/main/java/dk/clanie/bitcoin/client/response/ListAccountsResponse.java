@@ -18,11 +18,11 @@
 package dk.clanie.bitcoin.client.response;
 
 /**
- * Response object returned by BitcoindClient's listReceivedByAccount method.
+ * Response object used for BitcoindClient's listAccounts method.
  * 
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
-public class ListReceivedByAccountResponse extends BitcoindJsonRpcResponse<ListReceivedByAccountResult[]> {
+public class ListAccountsResponse extends BitcoindJsonRpcResponse<ListAccountsResult> {
 
 }

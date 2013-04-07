@@ -18,7 +18,7 @@
 package dk.clanie.bitcoin.client.response;
 
 /**
- * Response object returned by listReceivedByAddress.
+ * Response object returned by BitcoindClient's listReceivedByAddress method.
  * 
  * @author Claus Nielsen
  */

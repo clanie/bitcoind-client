@@ -80,26 +80,54 @@ public class ResponseSerializationTest {
 	 * Performs serializatio test for all json sample files in
 	 * src/test/resources/sampleResponse/.
 	 * <p>
+	 * Tests that each json sample can be deserialized to the type also given in
+	 * the file name, and serialized back to the original.<br>
+	 * Also checks that all fields are mapped explicitly (ie. that "otherFilds"
+	 * isn't used).
+	 * <p>
 	 * Skips files with a name beginning with an underscore are skipped, making
 	 * it possible to (temporarily) disable serialization tests of some samples.
+	 * <p>
+	 * Following response samples are currently skipped:
+	 * <dl>
+	 * <dt>_DOUBLE_UNWRAP.json</dt>
+	 * <dd>Not a real response sample, but a constructed json objects which
+	 * helps check if an Jackson bug has been fixed. See
+	 * {@link #testDoubleUnwrapped()}.</dd>
+	 * <dt>_GetAddedNodeInfo</dt>
+	 * <dd>The bitcoind getaddednodeinfo method returns an array or an object
+	 * depending on the input. I think that is a bug - see
+	 * https://github.com/bitcoin/bitcoin/issues/2467. If that is accepted and
+	 * fixed the sample should be changed. If the bug report is rejected the
+	 * current sample is correct and the BitcoindClient code should be fixed.</dd>
+	 * <dt>_ListAccountsResponse.json</dt>
+	 * <dd>ListAccountsResult stores account balances in a map which doesn't
+	 * preserve order, and so we cannot do roundtrip serialization to the exact
+	 * same json. When we try the serialization output IS equivalent to the
+	 * sample, so you could argue that it's bug in the test.</dd>
+	 * <dt>_ListUnspentResponse.json</dt>
+	 * <dd>ListUnspentResult is not yet finished - it sould be shortly.</dd>
+	 * <dt>_ListAddressGroupingsResponse.json</dt>
+	 * <dd>BigDecimal values are serialized using sientific notation.<br>
+	 * When jackson-databind commit 8a8322b493fe67059d8a46718dde8185266c8c0c
+	 * "Added serialization feature for writing BigDecimal in plain form" is
+	 * included ni a Jackson release this should be fairly easy to fix.</dd>
+	 * </dl>
 	 * 
 	 * @throws Exception
 	 */
 	@Test
-	public void test() throws Exception {
+	public void testSerialization() throws Exception {
 		List<File> files = IOUtil.listFilesRecursively(new File("src/test/resources/sampleResponse"));
 		for (File file : files) {
-			if (!file.getName().startsWith("_")) testSerialization(file);
+			if (!file.getName().startsWith("_")) doSerializationRoundtrip(file);
 			else log.debug("Serialization test of file " + file + " skipped because file name starts with an underscore.");
 		}
 	}
 
 
 	/**
-	 * Tests that the json sample in the given file can be deserialized to the
-	 * type also given in the file name, and serialized back to the original.<br>
-	 * Also checks that all fields are mapped explicitly (ie. that "otherFilds"
-	 * isn't used).
+	 * Perform serialization roundtrip testing of the given file.
 	 * 
 	 * @param file
 	 *            - file with sample data in json format. The file name must
@@ -107,7 +135,7 @@ public class ResponseSerializationTest {
 	 *            {@link #extractResponseClassName(File)}.
 	 * @throws Exception
 	 */
-	private void testSerialization(File file) throws Exception {
+	private void doSerializationRoundtrip(File file) throws Exception {
 		
 		log.debug("Testing deserialization of sample file " + file.getName() + ".");
 

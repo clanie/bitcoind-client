@@ -17,12 +17,35 @@
  */
 package dk.clanie.bitcoin.client.response;
 
+import org.springframework.roo.addon.javabean.RooJavaBean;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+import dk.clanie.bitcoin.json.JsonExtra;
+
 /**
- * Response object returned by BitcoindClient's listReceivedByAccount method.
+ * Data returned by BitcoindClient's getWork method.
  * 
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
-public class ListReceivedByAccountResponse extends BitcoindJsonRpcResponse<ListReceivedByAccountResult[]> {
+@RooJavaBean(settersByDefault = false)
+@JsonPropertyOrder({
+	"data", 
+	"target"
+})
+@JsonIgnoreProperties({"midstate", "hash1"})
+public class GetWorkResult extends JsonExtra {
+
+	/**
+	 * Block data.
+	 */
+	private String data;
+
+	/**
+	 * Little endian hash target.
+	 */
+	private String target;
 
 }

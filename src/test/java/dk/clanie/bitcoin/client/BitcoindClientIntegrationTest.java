@@ -48,7 +48,10 @@ import dk.clanie.bitcoin.client.response.GetRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.GetTransactionResponse;
 import dk.clanie.bitcoin.client.response.GetTxOutResponse;
 import dk.clanie.bitcoin.client.response.GetTxOutSetInfoResponse;
+import dk.clanie.bitcoin.client.response.GetWorkResponse;
 import dk.clanie.bitcoin.client.response.IntegerResponse;
+import dk.clanie.bitcoin.client.response.ListAccountsResponse;
+import dk.clanie.bitcoin.client.response.ListAddressGroupingsResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAccountResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAddressResponse;
 import dk.clanie.bitcoin.client.response.ListUnspentResponse;
@@ -303,8 +306,8 @@ public class BitcoindClientIntegrationTest {
 		BigDecimalResponse received = bc.getReceivedByAccount("clanie", null);
 		print(received);
 	}
-	
-	
+
+
 	@Test
 	public void testGetReceivedByAddress() throws Exception {
 		BigDecimalResponse received = bc.getReceivedByAddress("mj3QxNUyp4Ry2pbbP19tznUAAPqFvDbRFq", null);
@@ -325,20 +328,31 @@ public class BitcoindClientIntegrationTest {
 		print(txOut);
 	}
 
-	
+
 	@Test
 	public void testGetTxOutSetInfo() throws Exception {
 		GetTxOutSetInfoResponse txOutSetInfo = bc.getTxOutSetInfo();
 		print(txOutSetInfo);
 	}
 
-	
-	// TODO getwork [data]
+
+	@Test
+	public void testGetWork() throws Exception {
+		GetWorkResponse work = bc.getWork();
+		print(work);
+	}
+
+
+	@Test
+	public void testGetWork_withData() throws Exception {
+		BooleanResponse work = bc.getWork("000000020bb8b12222df37797da7a14c1e2d94e259dce954c1afaab54c09e8ef00000000fd5eceea3634400d5e5ece722814e81a4f2f2f95c033059d4f57e341ee9fb4bb51613a361c0b106700000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000080020000");
+		print(work);
+	}
 
 
 	@Test
 	public void testHelp() throws Exception {
-		StringResponse helpResponse = bc.help("gettxoutsetinfo");
+		StringResponse helpResponse = bc.help("listaddressgroupings");
 		print(helpResponse);
 	}
 
@@ -357,9 +371,27 @@ public class BitcoindClientIntegrationTest {
 	}
 
 
-	// TODO keypoolrefill
-	// TODO listaccounts [minconf=1]
-	// TODO listaddressgroupings
+	@Test
+	public void testKeyPoolRefill() throws Exception {
+		VoidResponse response = bc.keyPoolRefill();
+		print(response);
+	}
+
+
+	@Test
+	public void testListAccounts() throws Exception {
+		ListAccountsResponse listAccounts = bc.listAccounts(null);
+		print(listAccounts);
+	}
+
+
+	@Test
+	public void testListAddressGroupings() throws Exception {
+		ListAddressGroupingsResponse addressGroupings = bc.listAddressGroupings();
+		print(addressGroupings);
+	}
+
+
 	// TODO listlockunspent
 
 

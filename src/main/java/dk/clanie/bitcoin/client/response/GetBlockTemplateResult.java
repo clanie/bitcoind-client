@@ -78,7 +78,7 @@ public class GetBlockTemplateResult extends JsonExtra {
 	 */
 	@JsonProperty("coinbaseaux")
 	@JsonInclude(Include.NON_EMPTY)
-	private JsonObject coinBaseAux;
+	private AnyJsonObject coinBaseAux;
 
 	/**
 	 * Information for coinbase transaction.

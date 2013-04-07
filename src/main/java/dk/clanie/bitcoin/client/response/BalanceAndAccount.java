@@ -17,12 +17,43 @@
  */
 package dk.clanie.bitcoin.client.response;
 
+import java.math.BigDecimal;
+
+import org.springframework.roo.addon.javabean.RooJavaBean;
+
+import dk.clanie.core.BaseClass;
+
 /**
- * Response object returned by BitcoindClient's listReceivedByAccount method.
+ * Amount and account.
  * 
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
-public class ListReceivedByAccountResponse extends BitcoindJsonRpcResponse<ListReceivedByAccountResult[]> {
+@RooJavaBean(settersByDefault = false)
+public class BalanceAndAccount extends BaseClass {
 
+	/**
+	 * Amount.
+	 */
+	private BigDecimal amount;
+
+	/**
+	 * Account.
+	 */
+	private String account;
+
+	/**
+	 * Full constructor.
+	 * 
+	 * @param amount
+	 *            - address balance
+	 * @param account
+	 *            - ccount, if any (may be null)
+	 */
+	public BalanceAndAccount(BigDecimal amount, String account) {
+		this.amount = amount;
+		this.account = account;
+	}
+
+	
 }

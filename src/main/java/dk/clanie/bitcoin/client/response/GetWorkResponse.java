@@ -17,12 +17,15 @@
  */
 package dk.clanie.bitcoin.client.response;
 
+import org.springframework.roo.addon.javabean.RooJavaBean;
+
 /**
- * Response object returned by BitcoindClient's listReceivedByAccount method.
- * 
+ * Response object returned by BitcoindClient's getWork method.
+ *
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
-public class ListReceivedByAccountResponse extends BitcoindJsonRpcResponse<ListReceivedByAccountResult[]> {
+@RooJavaBean(settersByDefault = false)
+public class GetWorkResponse extends BitcoindJsonRpcResponse<GetWorkResult> {
 
 }

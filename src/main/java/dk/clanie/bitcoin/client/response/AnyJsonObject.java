@@ -17,12 +17,14 @@
  */
 package dk.clanie.bitcoin.client.response;
 
+import dk.clanie.bitcoin.json.JsonExtra;
+
 /**
- * Response object returned by BitcoindClient's listReceivedByAccount method.
+ * Holds any JSON object.
  * 
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
-public class ListReceivedByAccountResponse extends BitcoindJsonRpcResponse<ListReceivedByAccountResult[]> {
+public class AnyJsonObject extends JsonExtra {
 
 }

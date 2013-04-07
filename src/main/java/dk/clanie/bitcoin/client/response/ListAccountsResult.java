@@ -15,10 +15,11 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package dk.clanie.bitcoin.json;
+package dk.clanie.bitcoin.client.response;
 
 import static dk.clanie.collections.CollectionFactory.newHashMap;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Map;
 
@@ -26,19 +27,20 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import dk.clanie.core.BaseClass;
 
 /**
- * "MixIn" adding an otherFields map for json fields not explicitly mapped.
+ * Balance per account.
  * 
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public abstract class JsonExtra extends BaseClass {
+public class ListAccountsResult extends BaseClass {
 
-	private Map<String, Object> otherFields = newHashMap();
+	private Map<String, BigDecimal> accountBalances = newHashMap();
 
 	/**
 	 * Sets name and value of other (unknown) JSON fields.
@@ -48,20 +50,30 @@ public abstract class JsonExtra extends BaseClass {
 	 */
 	@JsonAnySetter
 	@SuppressWarnings("unused") // Is used by Jackson
-	private void set(String field, Object value)  {
-		otherFields.put(field, value);
+	private void set(String field, BigDecimal value)  {
+		accountBalances.put(field, value);
 	}
 
 
 	/**
-	 * Gets names and values of all other (unknown) JSON fields.
+	 * Gets names and balances of all accounts.
 	 * 
-	 * @return Names and values of other fields available. 
+	 * @return Names of other fields available. 
 	 */
 	@JsonAnyGetter
-	public Map<String, Object> getOtherFields() {
-		return Collections.unmodifiableMap(otherFields);
+	public Map<String, BigDecimal> getAccountBalances() {
+		return Collections.unmodifiableMap(accountBalances);
 	}
 
+	/**
+	 * Gets the balance of the given account.
+	 * 
+	 * @param account
+	 * @return account balance
+	 */
+	@JsonIgnore
+	public BigDecimal getAccountBalance(String account) {
+		return accountBalances.get(account);
+	}
 
 }

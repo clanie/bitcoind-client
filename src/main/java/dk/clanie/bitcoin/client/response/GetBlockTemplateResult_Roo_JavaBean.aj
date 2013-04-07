@@ -4,8 +4,8 @@
 package dk.clanie.bitcoin.client.response;
 
 import dk.clanie.bitcoin.client.Transaction;
+import dk.clanie.bitcoin.client.response.AnyJsonObject;
 import dk.clanie.bitcoin.client.response.GetBlockTemplateResult;
-import dk.clanie.bitcoin.client.response.JsonObject;
 import java.util.Date;
 
 privileged aspect GetBlockTemplateResult_Roo_JavaBean {
@@ -22,7 +22,7 @@ privileged aspect GetBlockTemplateResult_Roo_JavaBean {
         return this.transactions;
     }
     
-    public JsonObject GetBlockTemplateResult.getCoinBaseAux() {
+    public AnyJsonObject GetBlockTemplateResult.getCoinBaseAux() {
         return this.coinBaseAux;
     }
     
