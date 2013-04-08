@@ -19,16 +19,18 @@ package dk.clanie.bitcoin.client.response;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
+import dk.clanie.bitcoin.TransactionOutputRef;
+
 /**
- * Response object returned by BitconidClient's listUnspent method.
- *
- * Holds an array of {@link ListUnspentResult} objects, each of which has data
- * about one unspent transaction output.
- *
+ * Response object returned by BitconidClient's listLockUnspent method.
+ * 
+ * Holds an array of {@link TransactionOutputRef} objects, each a reference to
+ * one temporarily unspendable transaction output.
+ * 
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
 @RooJavaBean(settersByDefault = false)
-public class ListUnspentResponse extends BitcoindJsonRpcResponse<ListUnspentResult[]> {
+public class ListLockUnspentResponse extends BitcoindJsonRpcResponse<TransactionOutputRef[]> {
 
 }

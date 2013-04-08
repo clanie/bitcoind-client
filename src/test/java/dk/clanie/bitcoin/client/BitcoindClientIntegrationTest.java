@@ -52,6 +52,7 @@ import dk.clanie.bitcoin.client.response.GetWorkResponse;
 import dk.clanie.bitcoin.client.response.IntegerResponse;
 import dk.clanie.bitcoin.client.response.ListAccountsResponse;
 import dk.clanie.bitcoin.client.response.ListAddressGroupingsResponse;
+import dk.clanie.bitcoin.client.response.ListLockUnspentResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAccountResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAddressResponse;
 import dk.clanie.bitcoin.client.response.ListUnspentResponse;
@@ -289,14 +290,14 @@ public class BitcoindClientIntegrationTest {
 
 	@Test
 	public void testGetRawTransaction() throws Exception {
-		StringResponse response = bc.getRawTransaction("9e8485aed75a0e0c8b1bbcda5f3e1426a7da914cb5732f73dd8bd6128344a608");
+		StringResponse response = bc.getRawTransaction("9922eee42642f603ffeb28575de81972ebd9defc2d44e74a45066ef4a47692be");
 		print(response);
 	}
 
 
 	@Test
 	public void testGetRawTransaction_verbose() throws Exception {
-		GetRawTransactionResponse response = bc.getRawTransaction_verbose("9e8485aed75a0e0c8b1bbcda5f3e1426a7da914cb5732f73dd8bd6128344a608");
+		GetRawTransactionResponse response = bc.getRawTransaction_verbose("9922eee42642f603ffeb28575de81972ebd9defc2d44e74a45066ef4a47692be");
 		print(response);
 	}
 
@@ -352,7 +353,7 @@ public class BitcoindClientIntegrationTest {
 
 	@Test
 	public void testHelp() throws Exception {
-		StringResponse helpResponse = bc.help("listaddressgroupings");
+		StringResponse helpResponse = bc.help("lockunspent");
 		print(helpResponse);
 	}
 
@@ -392,7 +393,11 @@ public class BitcoindClientIntegrationTest {
 	}
 
 
-	// TODO listlockunspent
+	@Test
+	public void testListLockUnspent() throws Exception {
+		ListLockUnspentResponse lockUnspent = bc.listLockUnspent();
+		print(lockUnspent);
+	}
 
 
 	@Test
@@ -420,7 +425,13 @@ public class BitcoindClientIntegrationTest {
 	}
 
 
-	// TODO lockunspent unlock? [array-of-Objects]
+	@Test
+	public void testLockUnspent() throws Exception {
+		BooleanResponse response = bc.lockUnspent(true, new TransactionOutputRef[] {new TransactionOutputRef("0e4616e9d5d8270c219c8c675b35215ba80c137d7e588f6b54cfddc9d648dda8", 0)});
+		print(response);
+	}
+
+
 	// TODO move <fromaccount> <toaccount> <amount> [minconf=1] [comment]
 	// TODO sendfrom <fromaccount> <tobitcoinaddress> <amount> [minconf=1] [comment] [comment-to]
 	// TODO sendmany <fromaccount> {address:amount,...} [minconf=1] [comment]

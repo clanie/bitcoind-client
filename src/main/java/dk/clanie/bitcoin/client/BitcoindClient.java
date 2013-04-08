@@ -56,6 +56,7 @@ import dk.clanie.bitcoin.client.response.GetWorkResponse;
 import dk.clanie.bitcoin.client.response.IntegerResponse;
 import dk.clanie.bitcoin.client.response.ListAccountsResponse;
 import dk.clanie.bitcoin.client.response.ListAddressGroupingsResponse;
+import dk.clanie.bitcoin.client.response.ListLockUnspentResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAccountResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAddressResponse;
 import dk.clanie.bitcoin.client.response.ListUnspentResponse;
@@ -709,7 +710,16 @@ public class BitcoindClient {
 	}
 	
 	
-	// TODO listlockunspent version 0.8 Returns list of temporarily unspendable outputs
+	/**
+	 * Returns list of temporarily unspendable outputs.
+	 * 
+	 * @return
+	 * 
+	 * @since bitcoind 0.8
+	 */
+	public ListLockUnspentResponse listLockUnspent() {
+		return jsonRpc("listlockunspent", EMPTY_LIST, ListLockUnspentResponse.class);
+	}
 
 
 	/**
@@ -772,7 +782,23 @@ public class BitcoindClient {
 	}
 
 
-	// TODO lockunspent <unlock?> [array-of-objects] version 0.8 Updates list of temporarily unspendable outputs
+	/**
+	 * Updates list of temporarily unspendable outputs.
+	 * 
+	 * @param unlock - unlock (true) or lock (false)
+	 * @param txOutputs - references to transaction outputs to lock or unlock
+	 * @return {@link BooleanResponse}
+	 * 
+	 * @since bitcoind 0.8
+	 */
+	public BooleanResponse lockUnspent(Boolean unlock, TransactionOutputRef[] txOutputs) {
+		List<Object> params = newArrayList();
+		params.add(unlock);
+		params.add(txOutputs);
+		return jsonRpc("lockunspent", params, BooleanResponse.class);
+	}
+
+
 	// TODO move <fromaccount> <toaccount> <amount> [minconf=1] [comment] Move from one account in your wallet to another N
 	// TODO sendfrom <fromaccount> <tobitcoinaddress> <amount> [minconf=1] [comment] [comment-to] <amount> is a real and is rounded to 8 decimal places. Will send the given amount to the given address, ensuring the account has a valid balance using [minconf] confirmations. Returns the transaction ID if successful (not in JSON object). Y
 	// TODO sendmany <fromaccount> {address:amount,...} [minconf=1] [comment] amounts are double-precision floating point numbers Y
