@@ -108,10 +108,10 @@ public class ResponseSerializationTest {
 	 * <dt>_ListUnspentResponse.json</dt>
 	 * <dd>ListUnspentResult is not yet finished - it sould be shortly.</dd>
 	 * <dt>_ListAddressGroupingsResponse.json</dt>
-	 * <dd>BigDecimal values are serialized using sientific notation.<br>
+	 * <dd>BigDecimal values are serialized using scientific notation.<br>
 	 * When jackson-databind commit 8a8322b493fe67059d8a46718dde8185266c8c0c
 	 * "Added serialization feature for writing BigDecimal in plain form" is
-	 * included ni a Jackson release this should be fairly easy to fix.</dd>
+	 * included in a Jackson release this should be fairly easy to fix.</dd>
 	 * </dl>
 	 * 
 	 * @throws Exception

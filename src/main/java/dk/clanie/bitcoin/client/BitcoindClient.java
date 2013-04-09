@@ -59,6 +59,7 @@ import dk.clanie.bitcoin.client.response.ListAddressGroupingsResponse;
 import dk.clanie.bitcoin.client.response.ListLockUnspentResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAccountResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAddressResponse;
+import dk.clanie.bitcoin.client.response.ListTransactionsResponse;
 import dk.clanie.bitcoin.client.response.ListUnspentResponse;
 import dk.clanie.bitcoin.client.response.LongResponse;
 import dk.clanie.bitcoin.client.response.SignRawTransactionResponse;
@@ -285,14 +286,15 @@ public class BitcoindClient {
 
 	/**
 	 * Returns information about the given added node, or all added nodes (note
-	 * that onetry addnodes are not listed here). If dns is false, only a list
-	 * of added nodes will be provided, otherwise connected information will
-	 * also be available.
+	 * that onetry addnodes are not listed here).
 	 * 
 	 * @param dns
+	 *            - If dns is false, only a list of added nodes will be
+	 *            provided, otherwise connected information will also be
+	 *            available.
 	 * @param node
 	 *            - optional (may be null).
-	 * @return
+	 * @return {@link GetAddedNodeInfoResponse}
 	 * 
 	 * @since bitcoind 0.8
 	 */
@@ -594,7 +596,7 @@ public class BitcoindClient {
 		List<Object> params = newArrayList();
 		params.add(txId);
 		params.add(n);
-		if (includeMemoryPool != null) params.add(includeMemoryPool);
+		params.add(firstNotNull(includeMemoryPool, true));
 		return jsonRpc("gettxout", params, GetTxOutResponse.class);
 	}
 
@@ -663,8 +665,8 @@ public class BitcoindClient {
 	public VoidResponse importPrivateKey(String key, String label, Boolean rescan) {
 		List<Object> params = newArrayList();
 		params.add(key);
-		if (label != null || rescan != null) params.add(firstNotNull(label, ""));
-		if (rescan != null) params.add(rescan);
+		params.add(firstNotNull(label, ""));
+		params.add(firstNotNull(rescan, true));
 		return jsonRpc("importprivkey", params, VoidResponse.class);
 	}
 
@@ -713,7 +715,7 @@ public class BitcoindClient {
 	/**
 	 * Returns list of temporarily unspendable outputs.
 	 * 
-	 * @return
+	 * @return {@link ListLockUnspentResponse}
 	 * 
 	 * @since bitcoind 0.8
 	 */
@@ -755,7 +757,30 @@ public class BitcoindClient {
 
 
 	// TODO listsinceblock [blockhash] [target-confirmations] Get all transactions in blocks since block [blockhash], or all transactions if omitted. N
-	// TODO listtransactions [account] [count=10] [from=0] Returns up to [count] most recent transactions skipping the first [from] transactions for account [account]. If [account] not provided will return recent transaction from all accounts. N
+
+
+	/**
+	 * Returns up to <code>count</code> most recent transactions skipping the
+	 * first <code>from</code> transactions for account <code>account</code>.
+	 * 
+	 * @param account
+	 *            - optional (may be null). If not provided will return recent
+	 *            transaction from all accounts.
+	 * @param count
+	 *            - optional (may be null). Maximum number of transaction to
+	 *            return. Default 10.
+	 * @param from
+	 *            - optional (may be null). Number of transactions to skip.
+	 *            Default 0.
+	 * @return {@link ListTransactionsResponse}
+	 */
+	public ListTransactionsResponse listTransactions(String account, Integer count, Integer from) {
+		List<Object> params = newArrayList();
+		params.add(account);
+		params.add(firstNotNull(count, 10));
+		params.add(firstNotNull(from, 0));
+		return jsonRpc("listtransactions", params, ListTransactionsResponse.class);
+	}
 
 
 	/**
@@ -800,7 +825,42 @@ public class BitcoindClient {
 
 
 	// TODO move <fromaccount> <toaccount> <amount> [minconf=1] [comment] Move from one account in your wallet to another N
-	// TODO sendfrom <fromaccount> <tobitcoinaddress> <amount> [minconf=1] [comment] [comment-to] <amount> is a real and is rounded to 8 decimal places. Will send the given amount to the given address, ensuring the account has a valid balance using [minconf] confirmations. Returns the transaction ID if successful (not in JSON object). Y
+
+
+	/**
+	 * Sends the given amount to the given address, ensuring the account has a
+	 * valid balance using <code>minconf</code> confirmations. Returns the
+	 * transaction id if successful.
+	 * <p>
+	 * Requires unlocked wallet.
+	 * 
+	 * @param account
+	 * @param address
+	 *            - recipient's bitcoin address
+	 * @param amount
+	 *            - bitcoins
+	 * @param minConf
+	 *            - optional (may be null). Minimum number of confirmations for
+	 *            consumed transaction outputs. Default 1.
+	 * @param comment
+	 *            - optional (may be null). Text for the transactions comment
+	 *            field
+	 * @param commentTo
+	 *            - optional (may be null). Text for the transactions to: field
+	 * @return String with transaction number
+	 */
+	public StringResponse sendFrom(String account, String address, BigDecimal amount, Integer minConf, String comment, String commentTo) {
+		List<Object> params = newArrayList();
+		params.add(account);
+		params.add(address);
+		params.add(amount.setScale(SCALE));
+		params.add(firstNotNull(minConf, 1));
+		if (comment != null || commentTo != null) params.add(comment);
+		if (commentTo != null) params.add(commentTo);
+		return jsonRpc("sendfrom", params, StringResponse.class);
+	}
+
+
 	// TODO sendmany <fromaccount> {address:amount,...} [minconf=1] [comment] amounts are double-precision floating point numbers Y
 	// TODO sendrawtransaction <hexstring> version 0.7 Submits raw transaction (serialized, hex-encoded) to local node and network. N
 
@@ -812,9 +872,9 @@ public class BitcoindClient {
 	 * @param amount
 	 *            - bitcoins
 	 * @param comment
-	 *            - text for the transactions comment field
+	 *            - optional (may be null). Text for the transactions comment field
 	 * @param commentTo
-	 *            - text for the transactions to: field
+	 *            - optional (may be null). Text for the transactions to: field
 	 * @return String with transaction number
 	 */
 	public StringResponse sendToAddress(String address, BigDecimal amount, String comment, String commentTo) {

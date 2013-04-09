@@ -55,6 +55,7 @@ import dk.clanie.bitcoin.client.response.ListAddressGroupingsResponse;
 import dk.clanie.bitcoin.client.response.ListLockUnspentResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAccountResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAddressResponse;
+import dk.clanie.bitcoin.client.response.ListTransactionsResponse;
 import dk.clanie.bitcoin.client.response.ListUnspentResponse;
 import dk.clanie.bitcoin.client.response.LongResponse;
 import dk.clanie.bitcoin.client.response.SignRawTransactionResponse;
@@ -415,7 +416,13 @@ public class BitcoindClientIntegrationTest {
 
 
 	// TODO listsinceblock [blockhash] [target-confirmations]
-	// TODO listtransactions [account] [count=10] [from=0]
+
+
+	@Test
+	public void testListTransactions() throws Exception {
+		ListTransactionsResponse listTransactions = bc.listTransactions("clanie", null, null);
+		print(listTransactions);
+	}
 
 
 	@Test
@@ -433,7 +440,15 @@ public class BitcoindClientIntegrationTest {
 
 
 	// TODO move <fromaccount> <toaccount> <amount> [minconf=1] [comment]
-	// TODO sendfrom <fromaccount> <tobitcoinaddress> <amount> [minconf=1] [comment] [comment-to]
+
+
+	@Test
+	public void testSendFrom() throws Exception {
+		StringResponse sendFrom = bc.sendFrom("clanie", "mwswEtw6t2ziSjsfip62FPg84NXGsJ5H2o", BigDecimal.valueOf(0.01d), 10, "Comment", "CommentTO");
+		print(sendFrom);
+	}
+
+
 	// TODO sendmany <fromaccount> {address:amount,...} [minconf=1] [comment]
 	// TODO sendrawtransaction <hex string>
 
