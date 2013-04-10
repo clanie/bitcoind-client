@@ -18,11 +18,11 @@
 package dk.clanie.bitcoin.client.response;
 
 /**
- * Response object used for BitcoindClient's listTransactions method.
+ * Response object used for BitcoindClient's listSinceBlock method.
  * 
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
-public class ListTransactionsResponse extends BitcoindJsonRpcResponse<TransactionData[]> {
+public class ListSinceBlockResponse extends BitcoindJsonRpcResponse<ListSinceBlockResult> {
 
 }

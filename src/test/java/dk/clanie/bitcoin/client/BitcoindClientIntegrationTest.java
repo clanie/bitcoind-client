@@ -20,6 +20,7 @@ package dk.clanie.bitcoin.client;
 import static dk.clanie.collections.CollectionFactory.newArrayList;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -55,8 +56,10 @@ import dk.clanie.bitcoin.client.response.ListAddressGroupingsResponse;
 import dk.clanie.bitcoin.client.response.ListLockUnspentResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAccountResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAddressResponse;
+import dk.clanie.bitcoin.client.response.ListSinceBlockResponse;
 import dk.clanie.bitcoin.client.response.ListTransactionsResponse;
 import dk.clanie.bitcoin.client.response.ListUnspentResponse;
+import dk.clanie.bitcoin.client.response.ListUnspentResult;
 import dk.clanie.bitcoin.client.response.LongResponse;
 import dk.clanie.bitcoin.client.response.SignRawTransactionResponse;
 import dk.clanie.bitcoin.client.response.StringArrayResponse;
@@ -354,7 +357,7 @@ public class BitcoindClientIntegrationTest {
 
 	@Test
 	public void testHelp() throws Exception {
-		StringResponse helpResponse = bc.help("lockunspent");
+		StringResponse helpResponse = bc.help("sendmany");
 		print(helpResponse);
 	}
 
@@ -415,7 +418,11 @@ public class BitcoindClientIntegrationTest {
 	}
 
 
-	// TODO listsinceblock [blockhash] [target-confirmations]
+	@Test
+	public void testListSinceBlock() throws Exception {
+		ListSinceBlockResponse list = bc.listSinceBlock(null, null);
+		print(list);
+	}
 
 
 	@Test
@@ -439,7 +446,11 @@ public class BitcoindClientIntegrationTest {
 	}
 
 
-	// TODO move <fromaccount> <toaccount> <amount> [minconf=1] [comment]
+	@Test
+	public void testMove() throws Exception {
+		BooleanResponse move = bc.move("clanie", "cn@cn-consult", BigDecimal.valueOf(0.1d), null, null);
+		print(move);
+	}
 
 
 	@Test
@@ -449,8 +460,31 @@ public class BitcoindClientIntegrationTest {
 	}
 
 
-	// TODO sendmany <fromaccount> {address:amount,...} [minconf=1] [comment]
-	// TODO sendrawtransaction <hex string>
+	@Test
+	public void testSendMany() throws Exception {
+		StringResponse sendMany = bc.sendMany("clanie", new AddressAndAmount[] {
+				new AddressAndAmount("mrhz5ZgSF3C1BSdyCKt3gEdhKoRL5BNfJV", BigDecimal.valueOf(0.1d)),
+				new AddressAndAmount("mwswEtw6t2ziSjsfip62FPg84NXGsJ5H2o", BigDecimal.valueOf(0.2d))
+		}, null, null);
+		print(sendMany);
+	}
+
+
+	@Test
+	public void testSendRawTransaction() throws Exception {
+		ListUnspentResponse listUnspentResponse = bc.listUnspent(0, 999999);
+		ListUnspentResult[] unspent = listUnspentResponse.getResult();
+		TransactionOutputRef[] txOutputs = new TransactionOutputRef[] {unspent[0].getTxRef(), unspent[1].getTxRef()};
+		print(listUnspentResponse);
+		StringResponse rawTransaction = bc.createRawTransaction(Arrays.asList(txOutputs),
+				new AddressAndAmount("mrhz5ZgSF3C1BSdyCKt3gEdhKoRL5BNfJV", BigDecimal.valueOf(0.1d)),
+				new AddressAndAmount("mwswEtw6t2ziSjsfip62FPg84NXGsJ5H2o", BigDecimal.valueOf(0.2d)));
+		print(rawTransaction);
+		SignRawTransactionResponse signedRawTransaction = bc.signRawTransaction(rawTransaction.getResult(), null, null, null);
+		print(signedRawTransaction);
+		StringResponse sendRawTransaction = bc.sendRawTransaction(signedRawTransaction.getResult().getHex());
+		print(sendRawTransaction);
+	}
 
 
 	@Test

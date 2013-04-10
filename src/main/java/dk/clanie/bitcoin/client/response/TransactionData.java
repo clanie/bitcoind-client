@@ -32,7 +32,8 @@ import dk.clanie.bitcoin.json.BigDecimalPlainSerializer;
 import dk.clanie.bitcoin.json.JsonExtra;
 
 /**
- * List of transactions.
+ * Data about one transaction as returned by BitconidClient's listTransactions
+ * and listSinceBlock methods.
  * 
  * @author Claus Nielsen
  */
@@ -45,6 +46,7 @@ import dk.clanie.bitcoin.json.JsonExtra;
 	"amount",
 	"fee",
 	"confirmations",
+	"generated",
 	"blockhash",
 	"blockindex",
 	"blocktime",
@@ -54,7 +56,7 @@ import dk.clanie.bitcoin.json.JsonExtra;
 	"comment",
 	"to"
 })
-public class ListTransactionsResult extends JsonExtra {
+public class TransactionData extends JsonExtra {
 
 	private String account;
 	private String address;
@@ -68,6 +70,9 @@ public class ListTransactionsResult extends JsonExtra {
 	private BigDecimal fee;
 
 	private Integer confirmations;
+	
+	@JsonInclude(Include.NON_NULL)
+	private Boolean generated;
 
 	@JsonProperty("blockhash")
 	@JsonInclude(Include.NON_NULL)

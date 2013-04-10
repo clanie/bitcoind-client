@@ -17,12 +17,29 @@
  */
 package dk.clanie.bitcoin.client.response;
 
+import org.springframework.roo.addon.javabean.RooJavaBean;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+import dk.clanie.bitcoin.json.JsonExtra;
+
 /**
- * Response object used for BitcoindClient's listTransactions method.
+ * Data returned by BitcoindClient's sistSinceBlock method.
  * 
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
-public class ListTransactionsResponse extends BitcoindJsonRpcResponse<TransactionData[]> {
+@RooJavaBean(settersByDefault = false)
+@JsonPropertyOrder({
+	"transactions",
+	"lastblock"
+})
+public class ListSinceBlockResult extends JsonExtra {
+
+	private TransactionData[] transactions;
+
+	@JsonProperty("lastblock")
+	private String lastBlock;
 
 }

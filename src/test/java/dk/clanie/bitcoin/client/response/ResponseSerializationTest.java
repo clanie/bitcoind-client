@@ -106,7 +106,7 @@ public class ResponseSerializationTest {
 	 * same json. When we try the serialization output IS equivalent to the
 	 * sample, so you could argue that it's bug in the test.</dd>
 	 * <dt>_ListUnspentResponse.json</dt>
-	 * <dd>ListUnspentResult is not yet finished - it sould be shortly.</dd>
+	 * <dd>ListUnspentResult is not yet finished - it should be shortly.</dd>
 	 * <dt>_ListAddressGroupingsResponse.json</dt>
 	 * <dd>BigDecimal values are serialized using scientific notation.<br>
 	 * When jackson-databind commit 8a8322b493fe67059d8a46718dde8185266c8c0c

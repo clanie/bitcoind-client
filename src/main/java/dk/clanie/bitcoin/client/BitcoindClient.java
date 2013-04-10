@@ -59,6 +59,7 @@ import dk.clanie.bitcoin.client.response.ListAddressGroupingsResponse;
 import dk.clanie.bitcoin.client.response.ListLockUnspentResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAccountResponse;
 import dk.clanie.bitcoin.client.response.ListReceivedByAddressResponse;
+import dk.clanie.bitcoin.client.response.ListSinceBlockResponse;
 import dk.clanie.bitcoin.client.response.ListTransactionsResponse;
 import dk.clanie.bitcoin.client.response.ListUnspentResponse;
 import dk.clanie.bitcoin.client.response.LongResponse;
@@ -197,7 +198,7 @@ public class BitcoindClient {
 	 * @param txOutputs
 	 *            - transaction outputs to spend
 	 * @param addressAndAmount
-	 *            - recipients and amount
+	 *            - recipient and amount
 	 * @return {@link StringResponse} containing hex-encoded raw
 	 *         transaction.
 	 */
@@ -696,8 +697,8 @@ public class BitcoindClient {
 		params.add(firstNotNull(minConf, 1));
 		return jsonRpc("listaccounts", params, ListAccountsResponse.class);
 	}
-	
-	
+
+
 	/**
 	 * Lists groups of addresses which have had their common ownership made
 	 * public by common use as inputs or as the resulting change in past
@@ -710,8 +711,8 @@ public class BitcoindClient {
 	public ListAddressGroupingsResponse listAddressGroupings() {
 		return jsonRpc("listaddressgroupings", EMPTY_LIST, ListAddressGroupingsResponse.class);
 	}
-	
-	
+
+
 	/**
 	 * Returns list of temporarily unspendable outputs.
 	 * 
@@ -756,7 +757,20 @@ public class BitcoindClient {
 	}
 
 
-	// TODO listsinceblock [blockhash] [target-confirmations] Get all transactions in blocks since block [blockhash], or all transactions if omitted. N
+	/**
+	 * Gets all transactions in blocks since block <code>blockhash</code>, or
+	 * all transactions if omitted.
+	 * 
+	 * @param blockHash - optional (may be null)
+	 * @param targetConfirmations - optional (may be null)
+	 * @return {@link ListSinceBlockResponse}
+	 */
+	ListSinceBlockResponse listSinceBlock(String blockHash, Integer targetConfirmations) {
+		List<Object> params = newArrayList();
+		if (blockHash != null || targetConfirmations != null) params.add(blockHash);
+		if (targetConfirmations != null) params.add(targetConfirmations);
+		return jsonRpc("listsinceblock", params, ListSinceBlockResponse.class);
+	}
 
 
 	/**
@@ -824,7 +838,27 @@ public class BitcoindClient {
 	}
 
 
-	// TODO move <fromaccount> <toaccount> <amount> [minconf=1] [comment] Move from one account in your wallet to another N
+	/**
+	 * Move from one account in your wallet to another.
+	 * 
+	 * @param fromAccount
+	 * @param toAccount
+	 * @param amount
+	 * @param minConf
+	 *            - Optional (may be null). Minimum confirmations. Default 1.
+	 * @param comment
+	 *            - optional (may be null)
+	 * @return
+	 */
+	public BooleanResponse move(String fromAccount, String toAccount, BigDecimal amount, Integer minConf, String comment) {
+		List<Object> params = newArrayList();
+		params.add(fromAccount);
+		params.add(toAccount);
+		params.add(amount);
+		params.add(firstNotNull(minConf, 1));
+		if (comment != null) params.add(comment);
+		return jsonRpc("move", params, BooleanResponse.class);
+	}
 
 
 	/**
@@ -861,8 +895,53 @@ public class BitcoindClient {
 	}
 
 
-	// TODO sendmany <fromaccount> {address:amount,...} [minconf=1] [comment] amounts are double-precision floating point numbers Y
-	// TODO sendrawtransaction <hexstring> version 0.7 Submits raw transaction (serialized, hex-encoded) to local node and network. N
+	/**
+	 * Sends to many recipients.
+	 * 
+	 * @param fromAccount
+	 * @param addressesAndAmounts
+	 *            - recipients and amounts
+	 * @param minConf
+	 *            - optional (may be null). Minimum number of confirmations.
+	 *            Default 1.
+	 * @param commment
+	 *            - optional (may be null)
+	 * @return {@link StringResponse} with transaction id, if successful.
+	 */
+	public StringResponse sendMany(String fromAccount, AddressAndAmount[] addressesAndAmounts, Integer minConf, String commment) {
+		List<Object> params = newArrayList();
+		params.add(fromAccount);
+		Map<String, BigDecimal> recipients = newHashMap();
+		for (AddressAndAmount aaa : addressesAndAmounts) {
+			String address = aaa.getAddress();
+			BigDecimal amount = aaa.getAmount();
+			if (recipients.containsKey(address)) {
+				amount = recipients.get(address).add(amount);
+			}
+			recipients.put(address, amount);
+		}
+		params.add(recipients);
+		params.add(firstNotNull(minConf, 1));
+		if (commment != null) params.add(commment);
+		return jsonRpc("sendmany", params, StringResponse.class);
+	}
+
+
+	/**
+	 * Submits raw transaction to local node and network.
+	 * 
+	 * @param hex
+	 *            - transaction data (serialized, hex-encoded)
+	 * @return {@link StringResponse} with transaction id, if successful.
+	 * 
+	 * @since bitcoind 0.7
+	 */
+	public StringResponse sendRawTransaction(String hex) {
+		List<Object> params = newArrayList();
+		params.add(hex);
+		return jsonRpc("sendrawtransaction", params, StringResponse.class);
+	}
+
 
 	/**
 	 * Sends bitcoins to the given address.
@@ -994,7 +1073,7 @@ public class BitcoindClient {
 		params.add(hex);
 		params.add(requiredTxOuts);
 		params.add(privKeys);
-		params.add(sigHash.toString());
+		params.add(sigHash == null ? null : sigHash.toString());
 		return jsonRpc("signrawtransaction", params, SignRawTransactionResponse.class);
 	}
 
