@@ -26,8 +26,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.ResponseErrorHandler;
@@ -36,8 +35,10 @@ import org.springframework.web.client.RestTemplate;
 /**
  * Default BitcoindClient configuration.
  * <p>
- * Loads bitcoind-client.properties from the classpath. It must define the
- * following properties:
+ * Loads properties from bitcoind-client.properties and/or
+ * bitcoind-client-test.properties, one of which should be present on the
+ * classpath and define the following properties:
+ * 
  * <pre>
  * <code>
  * bitcoind.client.host = localhost
@@ -47,10 +48,13 @@ import org.springframework.web.client.RestTemplate;
  * </code>
  * </pre>
  * 
+ * If both property files are present on the classpath, settings in
+ * bitcoind-client-test.properties takes precedence.
+ * 
  * @author Claus Nielsen
  */
 @Configuration
-@PropertySource("classpath:/bitcoind-client.properties")
+@ImportResource("classpath:/META-INF/spring/bitcoind-client-context.xml")
 public class BitcoindClientDefaultConfig {
 
 	@Value("${bitcoind.client.host}")
@@ -65,12 +69,14 @@ public class BitcoindClientDefaultConfig {
 	@Value("${bitcoind.client.password}")
 	private String password;
 
+
 	@Bean
 	public BitcoindClient bitcoindClient() {
 		BitcoindClient bitcoindClient = new BitcoindClient();
 		bitcoindClient.setUrl("http://" + host + ":" + port);
 		return bitcoindClient;
 	}
+
 
 	@Bean
 	public RestTemplate restTemplate() {
@@ -80,19 +86,23 @@ public class BitcoindClientDefaultConfig {
 		return restTemplate;
 	}
 
+
 	private ResponseErrorHandler errorHandler() {
 		return new BitcoindJsonRpcErrorHandler();
 	}
 
+
 	private ClientHttpRequestFactory requestFactory() {
 		return new HttpComponentsClientHttpRequestFactory(httpClient());
 	}
+
 
 	private HttpClient httpClient() {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		httpClient.setCredentialsProvider(credentialsProvicer());
 		return httpClient;
 	}
+
 
 	private CredentialsProvider credentialsProvicer() {
 		CredentialsProvider credsProvider = new BasicCredentialsProvider();
@@ -102,9 +112,5 @@ public class BitcoindClientDefaultConfig {
 		return credsProvider;
 	}
 
-	@Bean
-	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-		return new PropertySourcesPlaceholderConfigurer();
-	}
 
 }
