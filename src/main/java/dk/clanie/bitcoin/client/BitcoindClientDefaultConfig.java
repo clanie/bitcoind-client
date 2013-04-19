@@ -23,8 +23,11 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.ResponseErrorHandler;
@@ -32,53 +35,76 @@ import org.springframework.web.client.RestTemplate;
 
 /**
  * Default BitcoindClient configuration.
+ * <p>
+ * Loads bitcoind-client.properties from the classpath. It must define the
+ * following properties:
+ * <pre>
+ * <code>
+ * bitcoind.client.host = localhost
+ * bitcoind.client.port = 8332
+ * bitcoind.client.user = bitcoinrpc
+ * bitcoind.client.password = letmepass
+ * </code>
+ * </pre>
  * 
  * @author Claus Nielsen
  */
 @Configuration
+@PropertySource("classpath:/bitcoind-client.properties")
 public class BitcoindClientDefaultConfig {
 
-	// TODO Make default config properties configurable
-	private static final String BITCOIND_HOST = "localhost";
-	private static final int BITCOIND_PORT = 18332;
-	private static final String BITCOIND_USER_NAME = "bitcoinrpc";
-	private static final String BITCOIND_PASSWORD = "3LUTo7SCiYmcYZuZyfkgFdLU4hSt9TDAdPQnJuvaGHoJ";
+	@Value("${bitcoind.client.host}")
+	private String host;
+
+	@Value("${bitcoind.client.port}")
+	private String port;
+
+	@Value("${bitcoind.client.user}")
+	private String user;
+
+	@Value("${bitcoind.client.password}")
+	private String password;
 
 	@Bean
-	public BitcoindClient getBitcoindClient() {
+	public BitcoindClient bitcoindClient() {
 		BitcoindClient bitcoindClient = new BitcoindClient();
-		bitcoindClient.setUrl("http://" + BITCOIND_HOST + ":" + BITCOIND_PORT);
+		bitcoindClient.setUrl("http://" + host + ":" + port);
 		return bitcoindClient;
 	}
 
 	@Bean
-	public RestTemplate getRestTemplate() {
+	public RestTemplate restTemplate() {
 		RestTemplate restTemplate = new RestTemplate();
-		restTemplate.setRequestFactory(getRequestFactory());
-		restTemplate.setErrorHandler(getErrorHandler());
+		restTemplate.setRequestFactory(requestFactory());
+		restTemplate.setErrorHandler(errorHandler());
 		return restTemplate;
 	}
 
-	private ResponseErrorHandler getErrorHandler() {
+	private ResponseErrorHandler errorHandler() {
 		return new BitcoindJsonRpcErrorHandler();
 	}
 
-	private ClientHttpRequestFactory getRequestFactory() {
-		return new HttpComponentsClientHttpRequestFactory(getHttpClient());
+	private ClientHttpRequestFactory requestFactory() {
+		return new HttpComponentsClientHttpRequestFactory(httpClient());
 	}
 
-	private HttpClient getHttpClient() {
+	private HttpClient httpClient() {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
-		httpClient.setCredentialsProvider(getCredentialsProvicer());
+		httpClient.setCredentialsProvider(credentialsProvicer());
 		return httpClient;
 	}
 
-	private CredentialsProvider getCredentialsProvicer() {
+	private CredentialsProvider credentialsProvicer() {
 		CredentialsProvider credsProvider = new BasicCredentialsProvider();
 		credsProvider.setCredentials(
-				new AuthScope(BITCOIND_HOST, BITCOIND_PORT),
-				new UsernamePasswordCredentials(BITCOIND_USER_NAME, BITCOIND_PASSWORD));
+				new AuthScope(host, Integer.valueOf(port)),
+				new UsernamePasswordCredentials(user, password));
 		return credsProvider;
+	}
+
+	@Bean
+	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+		return new PropertySourcesPlaceholderConfigurer();
 	}
 
 }

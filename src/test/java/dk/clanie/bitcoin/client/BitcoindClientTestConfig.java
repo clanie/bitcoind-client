@@ -44,4 +44,5 @@ public class BitcoindClientTestConfig {
 	public RestTemplate getRestTemplate() {
 		return Mockito.mock(RestTemplate.class);
 	}
+
 }
