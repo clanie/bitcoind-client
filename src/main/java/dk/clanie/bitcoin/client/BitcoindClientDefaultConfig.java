@@ -35,21 +35,25 @@ import org.springframework.web.client.RestTemplate;
 /**
  * Default BitcoindClient configuration.
  * <p>
- * Loads properties from bitcoind-client.properties and/or
- * bitcoind-client-test.properties, one of which should be present on the
- * classpath and define the following properties:
+ * Loads properties from:
+ * <ol>
+ * <li>classpath:/bitcoind-client.properties</li>
+ * <li>classpath:/bitcoind-client-test.properties</li>
+ * <li>The resource specified in environment variable
+ * <code>BITCOIND_CLIENT_PROPERTY_FILE</code></li>
+ * </ol>
+ * <p>
+ * At least one of these should be present and define the following properties:
+ * <bl>
+ * <li>bitcoind.client.host - defaults to localhost.</li>
+ * <li>bitcoind.client.port - default 18332, which is bitcond's default testnet
+ * port. The default for the real bitcoin network is 8332.</li>
+ * <li>bitcoind.client.user</li>
+ * <li>bitcoind.client.passwor</li>
+ * </bl>
  * 
- * <pre>
- * <code>
- * bitcoind.client.host = localhost
- * bitcoind.client.port = 8332
- * bitcoind.client.user = bitcoinrpc
- * bitcoind.client.password = letmepass
- * </code>
- * </pre>
- * 
- * If both property files are present on the classpath, settings in
- * bitcoind-client-test.properties takes precedence.
+ * If a property is defined in more than one property file, the settings loaded
+ * <i>last</i> takes precedence.
  * 
  * @author Claus Nielsen
  */
@@ -58,16 +62,16 @@ import org.springframework.web.client.RestTemplate;
 public class BitcoindClientDefaultConfig {
 
 	@Value("${bitcoind.client.host}")
-	private String host;
+	private String host = "localhost";
 
 	@Value("${bitcoind.client.port}")
-	private String port;
+	private String port = "18332";
 
 	@Value("${bitcoind.client.user}")
-	private String user;
+	private String user = null;
 
 	@Value("${bitcoind.client.password}")
-	private String password;
+	private String password = null;
 
 
 	@Bean

@@ -7,7 +7,7 @@
 	<context:annotation-config />
 
 	<context:property-placeholder
-		location="classpath:/bitcoind-client.properties, classpath:/bitcoind-client-test.properties"
+		location="classpath:/bitcoind-client.properties, classpath:/bitcoind-client-test.properties, ${BITCOIND_CLIENT_PROPERTY_FILE}"
 		ignore-resource-not-found="true" />
 
 </beans>

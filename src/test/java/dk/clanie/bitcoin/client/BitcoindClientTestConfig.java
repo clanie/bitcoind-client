@@ -24,6 +24,10 @@ import org.springframework.web.client.RestTemplate;
 
 /**
  * BitcoindClient configuration for isolated unit testing.
+ * <p>
+ * RestTemplate is mocked out, so no calls are actually made to bitcoind when
+ * using this configuration, but requests are captured so that tests can verify
+ * if bitcoind is called as expected.
  * 
  * @author Claus Nielsen
  */
