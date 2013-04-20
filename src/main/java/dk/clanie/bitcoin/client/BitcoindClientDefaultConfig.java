@@ -26,7 +26,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.ResponseErrorHandler;
@@ -35,43 +36,31 @@ import org.springframework.web.client.RestTemplate;
 /**
  * Default BitcoindClient configuration.
  * <p>
- * Loads properties from:
- * <ol>
- * <li>classpath:/bitcoind-client.properties</li>
- * <li>classpath:/bitcoind-client-test.properties</li>
- * <li>The resource specified in environment variable
- * <code>BITCOIND_CLIENT_PROPERTY_FILE</code></li>
- * </ol>
- * <p>
- * At least one of these should be present and define the following properties:
+ * Prerequisite properties:
  * <bl>
- * <li>bitcoind.client.host - defaults to localhost.</li>
- * <li>bitcoind.client.port - default 18332, which is bitcond's default testnet
- * port. The default for the real bitcoin network is 8332.</li>
+ * <li>bitcoind.client.host</li>
+ * <li>bitcoind.client.port</li>
  * <li>bitcoind.client.user</li>
  * <li>bitcoind.client.passwor</li>
  * </bl>
  * 
- * If a property is defined in more than one property file, the settings loaded
- * <i>last</i> takes precedence.
- * 
  * @author Claus Nielsen
  */
 @Configuration
-@ImportResource("classpath:/META-INF/spring/bitcoind-client-context.xml")
+@PropertySource("classpath:/META-INF/spring/bitcoind-client-default.properties")
 public class BitcoindClientDefaultConfig {
 
 	@Value("${bitcoind.client.host}")
-	private String host = "localhost";
+	private String host;
 
 	@Value("${bitcoind.client.port}")
-	private String port = "18332";
+	private String port;
 
 	@Value("${bitcoind.client.user}")
-	private String user = null;
+	private String user;
 
 	@Value("${bitcoind.client.password}")
-	private String password = null;
+	private String password;
 
 
 	@Bean
@@ -114,6 +103,12 @@ public class BitcoindClientDefaultConfig {
 				new AuthScope(host, Integer.valueOf(port)),
 				new UsernamePasswordCredentials(user, password));
 		return credsProvider;
+	}
+
+
+	@Bean
+	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+		return new PropertySourcesPlaceholderConfigurer();
 	}
 
 
