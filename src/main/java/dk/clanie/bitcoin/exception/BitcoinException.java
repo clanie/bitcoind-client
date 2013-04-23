@@ -20,6 +20,7 @@ package dk.clanie.bitcoin.exception;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import dk.clanie.bitcoin.client.response.BitcoindErrorResponse;
+import dk.clanie.exception.AbstractRuntimeException;
 
 /**
  * Superclass for all exceptions thrown when a call to bitcoind fails.
@@ -27,7 +28,7 @@ import dk.clanie.bitcoin.client.response.BitcoindErrorResponse;
  * @author Claus Nielsen
  */
 @SuppressWarnings("serial")
-public class BitcoinException extends RuntimeException {
+public class BitcoinException extends AbstractRuntimeException {
 
 	private BitcoindErrorResponse errorResponse = null;
 
