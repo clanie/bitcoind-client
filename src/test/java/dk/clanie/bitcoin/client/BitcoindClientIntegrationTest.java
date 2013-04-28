@@ -84,7 +84,7 @@ import dk.clanie.bitcoin.client.response.VoidResponse;
 public class BitcoindClientIntegrationTest {
 
 	@Autowired
-	private BitcoindClient bc;
+	private BitcoindClientImpl bc;
 
 	private ObjectMapper om = new ObjectMapper();
 

@@ -39,7 +39,7 @@ public class BitcoindClientTestConfig {
 
 	@Bean
 	public BitcoindClient getBitcoindClient() {
-		BitcoindClient bitcoindClient = new BitcoindClient();
+		BitcoindClient bitcoindClient = new BitcoindClientImpl();
 		bitcoindClient.setUrl("http://" + BITCOIND_HOST + ":" + BITCOIND_PORT);
 		return bitcoindClient;
 	}

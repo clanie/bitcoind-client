@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2013, Claus Nielsen, cn@cn-consult.dk
  *
  * This program is free software; you can redistribute it and/or modify
@@ -65,7 +65,7 @@ public class BitcoindClientDefaultConfig {
 
 	@Bean
 	public BitcoindClient bitcoindClient() {
-		BitcoindClient bitcoindClient = new BitcoindClient();
+		BitcoindClient bitcoindClient = new BitcoindClientImpl();
 		bitcoindClient.setUrl("http://" + host + ":" + port);
 		return bitcoindClient;
 	}
