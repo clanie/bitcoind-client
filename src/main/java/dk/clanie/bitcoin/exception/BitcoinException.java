@@ -17,7 +17,7 @@
  */
 package dk.clanie.bitcoin.exception;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import dk.clanie.bitcoin.client.response.BitcoindErrorResponse;
 import dk.clanie.exception.AbstractRuntimeException;
